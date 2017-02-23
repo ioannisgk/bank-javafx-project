@@ -57,6 +57,7 @@ public class Account {
         System.out.println("Your current balance is £" + balance);
     }
 
+    // Method to generate unique AccountIDs
     public static String createID()
     {
         return String.valueOf(idCounter.getAndIncrement());

@@ -1,9 +1,6 @@
 package com.company;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 public class Main {
-    // private static AtomicLong idCounter = new AtomicLong(1000000);
 
     public static void main(String[] args) {
 
