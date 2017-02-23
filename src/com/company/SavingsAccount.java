@@ -8,7 +8,7 @@ public class SavingsAccount extends Account {
         accountID = createID();
     }
 
-    // Method to withdraw money
+    // Method to withdraw money (overriden)
     public void withdraw(double amount) {
         if (amount > balance) {
             System.out.println("You have insufficient funds, please enter a smaller amount");
