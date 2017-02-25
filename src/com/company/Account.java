@@ -7,7 +7,7 @@ public class Account {
     // Class attributes
     protected Date dateOpened;
     protected String sortcode;
-    protected String customer;
+    protected Customer customer;
     protected String type;
     protected double balance;
     protected double interest;
@@ -34,18 +34,18 @@ public class Account {
     }
 
     // Constructor for superclass
-    Account(String customer, double balance) {
+    Account(Customer customer, double balance) {
         this.customer = customer;
         this.balance = balance;
         this.interest = 0.03;
     }
 
-    public int getNoOfDayForNagativeBalanace() {
+    public int getNoOfDayFornegativeBalanace() {
         return noOfDayForNegativeBalanace;
     }
 
-    public void setNoOfDayForNagativeBalanace(int noOfDayForNagativeBalanace) {
-        this.noOfDayForNegativeBalanace = noOfDayForNagativeBalanace;
+    public void setNoOfDayFornegativeBalanace(int noOfDayFornegativeBalanace) {
+        this.noOfDayForNegativeBalanace = noOfDayFornegativeBalanace;
     }
 
     public void showDetails() {
@@ -66,7 +66,7 @@ public class Account {
     public double getInterest() {
         return interest;
     }
-    public String getCustomer() { return customer; }
+    public Customer getCustomer() { return this.customer; }
 
     // Method to deposit money
     public void deposit(double amount) {

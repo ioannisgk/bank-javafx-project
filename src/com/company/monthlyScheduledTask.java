@@ -3,6 +3,7 @@ package com.company;
 import java.util.List;
 import java.util.TimerTask;
 
+
 public class monthlyScheduledTask  extends TimerTask{
 
 
@@ -14,18 +15,38 @@ public class monthlyScheduledTask  extends TimerTask{
     public void run() {
         for (Account account : accounts) {
             account.showDetails();
+
+            /**
+             * number of day since account is created
+             */
             long noOfDaysSinceAccountOpened =  Math.abs((account.dateOpened.getTime()-System.currentTimeMillis())/86400000);
+
+            /**
+             * daily avg. balance
+             */
             double dailyAvgBalance = account.getTotalMonthlyBalance()/30;
+
             if(account instanceof SavingsAccount){
-                //no monthly task for saving accosunt
+                //no monthly task for saving account
             }else if(account instanceof CurrentAccount) {
-                if(account.getNoOfDayForNagativeBalanace()>0){
+                //charge user based on number of day on which user has negative balance
+                if(account.getNoOfDayFornegativeBalanace()>0){
                     account.setBalance(account.getBalance()*10);
                 }
             }else if(account instanceof DepositAccount){
+                //add interest for deposit account
                 account.setBalance(account.getBalance()*1.05);
             }
-            account.setNoOfDayForNagativeBalanace(0);//reset for next month
+
+            /**
+             * reset number of negative balance days for next month
+             */
+            account.setNoOfDayFornegativeBalanace(0);//reset for next month
+
+            /**
+             * reset total month balance for next month
+             */
+            account.setTotalMonthlyBalance(0);
         }
 
     }

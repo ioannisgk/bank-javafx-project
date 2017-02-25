@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class SavingsAccount extends Account {
     // Constructor for subclass
-    public SavingsAccount(String customer, double balance) {
+    public SavingsAccount(Customer customer, double balance) {
         super(customer, balance);
         type = "Savings";
         sortcode = "708090";

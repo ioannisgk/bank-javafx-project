@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class DepositAccount extends Account {
     // Constructor for subclass
-    public DepositAccount(String customer, double balance) {
+    public DepositAccount(Customer customer, double balance) {
         super(customer, balance);
         type = "Deposit";
         sortcode = "405060";

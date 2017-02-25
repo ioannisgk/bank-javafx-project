@@ -10,7 +10,7 @@ public class CurrentAccount extends Account {
     private boolean charging = false;
 
     // Constructor for subclass
-    public CurrentAccount(String customer, double balance) {
+    public CurrentAccount(Customer customer, double balance) {
         super(customer, balance);
         type = "Current";
         sortcode = "102030";
