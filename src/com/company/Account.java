@@ -1,15 +1,37 @@
 package com.company;
 
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Account {
     // Class attributes
+    protected Date dateOpened;
+    protected String sortcode;
     protected String customer;
     protected String type;
     protected double balance;
     protected double interest;
     protected String accountID;
     protected static AtomicLong idCounter = new AtomicLong(1000001);
+    /**
+     * number of day  for negative balance in account
+     */
+    private int noOfDayForNegativeBalanace = 0;
+
+    /**
+     * total monthly balance , so we can calculate avg.balance
+     */
+    private double totalMonthlyBalance = 0;
+
+
+
+    public double getTotalMonthlyBalance() {
+        return totalMonthlyBalance;
+    }
+
+    public void setTotalMonthlyBalance(double totalMonthlyBalance) {
+        this.totalMonthlyBalance = totalMonthlyBalance;
+    }
 
     // Constructor for superclass
     Account(String customer, double balance) {
@@ -18,6 +40,17 @@ public class Account {
         this.interest = 0.03;
     }
 
+    public int getNoOfDayForNagativeBalanace() {
+        return noOfDayForNegativeBalanace;
+    }
+
+    public void setNoOfDayForNagativeBalanace(int noOfDayForNagativeBalanace) {
+        this.noOfDayForNegativeBalanace = noOfDayForNagativeBalanace;
+    }
+
+    public void showDetails() {
+
+    }
     // Class setters
     public void setBalance(double balance) {
         this.balance = balance;
