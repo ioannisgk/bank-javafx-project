@@ -1,5 +1,4 @@
 package com.company;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,17 +7,15 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
- * Entry point of application
- *
- */
+ * Customer class
+ **/
+
 public class Main {
 
-    //list of all accounts in system
+    // List that contains all accounts in the system
     public static List<Account> totalAccountsInSystem = new ArrayList<>();
 
-
-    //Type of account system has
+    // TYpes of Accounts in the system
     public static final String ACCOUNT_TYPE_SAVINGS = "savings";
     public static final String ACCOUNT_TYPE_DEPOSIT = "deposit";
     public static final String ACCOUNT_TYPE_CURRENT = "current";
@@ -27,62 +24,76 @@ public class Main {
 
         System.out.println("Welcome!!!");
 
-        //create customer
-        Customer customer = new Customer("Alex","Alex@gmail.com","India","alex","123",new Date());
+        System.out.println("1. Creating a customer...");
+        Customer customer = new Customer("Ioannis","email@domain.com","Greece","ioannisgk","123456", new Date());
+        System.out.println("Customer created!");
 
-        //open 1 savings account
-        customer.openAccount(ACCOUNT_TYPE_SAVINGS, 100);
+        System.out.println("------------ Opening Accounts ------------");
 
-        //open 2 current account
-        customer.openAccount(ACCOUNT_TYPE_CURRENT, 111);
-        customer.openAccount(ACCOUNT_TYPE_CURRENT, 22);
+        System.out.println("2. Opening two Current Accounts...");
+        customer.openAccount(ACCOUNT_TYPE_CURRENT, 100);
+        customer.openAccount(ACCOUNT_TYPE_CURRENT, 50);
+        System.out.println("Two Current Accounts opened!");
 
-        //when user try to open 3rd current account, system will not create account, so below code not going to create account
+        System.out.println("3. Opening a 3rd Current Account...");
         customer.openAccount(ACCOUNT_TYPE_CURRENT, 33);
+        System.out.println("Current Account NOT opened!");
 
-        //open 1 deposit account
+        System.out.println("4. Opening a Deposit Account...");
         customer.openAccount(ACCOUNT_TYPE_DEPOSIT, 20);
+        System.out.println("Deposit Account opened!");
 
-        //withdraw amount from first account
-        customer.withdraw(customer.getCustomerAccounts().get(0), 11);
+        System.out.println("5. Opening a Savings Account...");
+        customer.openAccount(ACCOUNT_TYPE_SAVINGS, 100);
+        System.out.println("Deposit Account opened!");
 
-        //deposit amount in first account
-        customer.deposit(customer.getCustomerAccounts().get(0), 11);
+        System.out.println("------------ Act On Accounts ------------");
 
-        //give details of first account
+        System.out.println("6. Withdraw from first Account...");
+        customer.withdraw(customer.getCustomerAccounts().get(0), 10);
+        System.out.println("Withdrawal completed!");
+
+        System.out.println("7. Deposit to first Account...");
+        customer.deposit(customer.getCustomerAccounts().get(0), 15);
+        System.out.println("Deposit completed!");
+
+        System.out.println("------------ Show Details of Accounts ------------");
+
+        System.out.println("8. Show Details from first Account...");
         customer.queryAccountDetails(customer.getCustomerAccounts().get(0));
+        System.out.println("Details shown!");
 
-        //give details of all accounts
+        System.out.println("9. Show Details from All Accounts...");
         customer.queryAllAccountDetails();
+        System.out.println("All details shown!");
 
-        //give balance of first account
+        System.out.println("10. Show Balance from first Account...");
         double balance = customer.queryAccountBalance(customer.getCustomerAccounts().get(0));
-        System.out.println("balance"+balance);
+        System.out.println("balance" + balance);
+        System.out.println("Balance shown!");
 
-        //create daily and monthly schedulers
+        // Create daily and monthly schedulers;
         createSchedulers();
-
     }
 
-    /**
-     *
-     */
+    // Example and some uses on Stack Overflow thread here
+    // http://stackoverflow.com/questions/9375882/how-i-can-run-my-timertask-everyday-2-pm
+    // Documentation http://docs.oracle.com/javase/7/docs/api/java/util/Timer.html#schedule(java.util.TimerTask,%20java.util.Date,%20long)
     private static void createSchedulers() {
-        //create daily scheduler ,so we can process all system account daily
+        // Create daily scheduler and process all accounts each day
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
         Timer timer = new Timer();
-        timer.schedule(new DailyScheduledTask(totalAccountsInSystem), today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)); // 60*60*24*100 = 8640000ms
+        timer.schedule(new DailyScheduledTask(totalAccountsInSystem), today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 
-
-        //create monthly scheduler, lso we can process all system accounts in end of every month
+        // Create monthly scheduler and process all accounts each month
         today.set(Calendar.DAY_OF_MONTH, 30);
         today.set(Calendar.HOUR_OF_DAY, 23);
         today.set(Calendar.MINUTE, 59);
         today.set(Calendar.SECOND, 59);
         timer = new Timer();
-        timer.schedule(new DailyScheduledTask(totalAccountsInSystem), today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)*30);
+        timer.schedule(new MonthlyScheduledTask(totalAccountsInSystem), today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)*30);
     }
 }

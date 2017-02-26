@@ -1,6 +1,9 @@
 package com.company;
-
 import java.util.Date;
+
+/**
+ * DepositAccount subclass
+ **/
 
 public class DepositAccount extends Account {
     // Constructor for subclass
@@ -10,6 +13,7 @@ public class DepositAccount extends Account {
         sortcode = "405060";
         dateOpened = new Date();
         accountID = createID();
+        interest = 0.03;
     }
 
     // Print details of CurrentAccount
