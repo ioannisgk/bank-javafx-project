@@ -23,9 +23,9 @@ public class SavingsAccount extends Account {
     // http://stackoverflow.com/questions/20165564/calculating-days-between-two-dates-with-in-java
     // long noOfDaysSinceAccountOpened =  Math.abs((account.dateOpened.getTime()-System.currentTimeMillis())/86400000);
 
-    // Need to add method: public void deposit(double amount)
+    // TODO: public void deposit(double amount)
 
-    // Need to add method: public void withdraw(double amount)
+    // TODO: public void withdraw(double amount)
 
     // Print details of CurrentAccount
     public void showDetails() {

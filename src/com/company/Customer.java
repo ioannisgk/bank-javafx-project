@@ -173,4 +173,19 @@ public class Customer {
     public double queryAccountBalance(Account account) {
         return account.getBalance();
     }
+
+    // TODO: showDetails()
+
+    // Print details of Customer
+    public void showDetails() {
+        System.out.println("Customer Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Address: " + address + "\n" +
+                "Username: " + username + "\n" +
+                "Password: " + password +"\n" +
+                "Date of Birth: " + dateOfBirth +"\n" +
+                "Current Accounts: " + noOfCurrentAccounts + "\n" +
+                "Deposit Accounts: " + noOfDepositAccount + "\n" +
+                "Savings Accounts: " + noOfSavingsAccounts + "\n");
+    }
 }

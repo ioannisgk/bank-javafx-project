@@ -45,8 +45,9 @@ public class CurrentAccount extends Account {
                 "Date opened: " + dateOpened + "\n" +
                 "Overdraft amount: " + overdraft +"\n" +
                 "Overdraft charge: " + chargingFee +"\n" +
-                "Owner Name: " + customer + "\n" +
                 "Balance: " + balance + "\n" +
                 "Interest: " + interest * 100 + "%\n");
+
+        customer.showDetails();
     }
 }
