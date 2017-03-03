@@ -8,7 +8,7 @@ import java.util.TimerTask;
  * Monthly task 3: If Savings account, calculate and apply interest
  **/
 
-public class MonthlyScheduledTask extends TimerTask{
+public class MonthlyScheduledTask extends TimerTask {
 
     // Class attributes
     private List<Account> accounts;
@@ -28,19 +28,19 @@ public class MonthlyScheduledTask extends TimerTask{
 
             if (account instanceof CurrentAccount) {
                 // Charge customer based on number of days on which user has negative balance
-                if (account.getNoOfDayFornegativeBalanace() > 0) {
-                    double fees = account.getNoOfDayFornegativeBalanace() * 10;
+                if (account.getNoOfDaysForOverdraftLimit() > 0) {
+                    double fees = account.getNoOfDaysForOverdraftLimit() * 10;
                     account.setBalance(account.getBalance() - fees);
                 }
                 // Reset charging days for next month
-                account.setNoOfDayFornegativeBalanace(0);
+                account.setNoOfDaysForOverdraftLimit(0);
 
             } else if (account instanceof DepositAccount) {
                 // Calculate monthly average balance
                 double monthlyAvgBalance = account.getTotalMonthlyBalance() / 30;
                 // Calculate and apply interest to Deposit Account
                 double monthlyInterest = account.getInterest() / 12;
-                account.setBalance((account.getBalance() * monthlyInterest) + account.getBalance());
+                account.setBalance((monthlyInterest * monthlyInterest) + account.getBalance());
                 // Reset total monthly balance for next month
                 account.setTotalMonthlyBalance(0);
 

@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 /**
- * Daily task 1: If negative balance, increase charging days
+ * Daily task 1: If customer exceeded the overdraft limit, increase charging days
  * Daily task 2: Keep track of total monthly balance
  **/
 
@@ -23,18 +23,16 @@ public class DailyScheduledTask extends TimerTask {
     @Override
     public void run() {
         for (Account account : accounts) {
-            account.showDetails();
 
-            // If there has been an overdraft, we increase "NoOfDayFornegativeBalanace" by 1,
-            // so we can charge customer at the end of the month
-            if (account.getBalance() < 0) {
-                account.setNoOfDayFornegativeBalanace(account.getNoOfDayFornegativeBalanace() + 1);
+            if (account instanceof CurrentAccount) {
+                // If customer exceeded the overdraft limit, we increase "getNoOfDaysForOverdraftLimit" by 1,
+                // so we can charge customer at the end of the month
+                if (account.getCharging() == true) {
+                    account.setNoOfDaysForOverdraftLimit(account.getNoOfDaysForOverdraftLimit() + 1);
+                }
+                // Keep track of "TotalMonthlyBalance" by adding the current balance to it
+                account.setTotalMonthlyBalance(account.getTotalMonthlyBalance() + account.getBalance());
             }
-
-            // Keep track of "TotalMonthlyBalance" by adding the current balance to it
-            account.setTotalMonthlyBalance(account.getTotalMonthlyBalance() + account.getBalance());
         }
     }
 }
-
-

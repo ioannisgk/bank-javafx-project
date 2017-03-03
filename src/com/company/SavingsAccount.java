@@ -8,15 +8,19 @@ import java.util.Date;
 public class SavingsAccount extends Account {
     // Class attributes
     private int terms;
+    private double upperLimit;
 
     // Constructor for subclass
     public SavingsAccount(Customer customer, double balance) {
         super(customer, balance);
+        terms = 1;
         type = "Savings";
         sortcode = "708090";
         dateOpened = new Date();
         accountID = createID();
         interest = 0.03;
+        upperLimit = 15240;
+        approvedWithdrawal = false; //Check in case a method needs to be used
     }
 
     // Calculate number of days since account was created, example:
