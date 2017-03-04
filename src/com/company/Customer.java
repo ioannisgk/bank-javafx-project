@@ -12,7 +12,7 @@ import java.io.Serializable;
  * Task 3: The openNewAccount method increases the number of accounts created and adds it to the CustomerAccounts list
  **/
 
-public class Customer implements Serializable {
+public class Customer {
     // Class attributes
     private String name;
     private String email;

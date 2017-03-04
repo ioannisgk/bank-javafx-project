@@ -20,15 +20,6 @@ public class Main implements Serializable {
     public static final String ACCOUNT_TYPE_DEPOSIT = "deposit";
     public static final String ACCOUNT_TYPE_CURRENT = "current";
 
-    //Variables regarding writing the file
-    /* private static final File FILE_NAME = new File("customers.bin");
-    private static final File file = new File("customers.bin");
-    private static ObjectInputStream objectInput;
-    private static FileInputStream fileInput;
-    private static ObjectOutputStream objectOutput;
-    private static FileOutputStream fileOutput;
-    */
-
     // A new object of the class Customer is created
     private static Customer customer = new Customer();
     private static List<Customer> customerList = new ArrayList<>();
@@ -39,8 +30,8 @@ public class Main implements Serializable {
     ///////////////////////////////////////////////////////////////////
 
     // Main method
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        // showMenu();
+    public static void main(String[] args) throws Exception {
+        customerList();
         System.out.println("Welcome!!!");
         System.out.println("A: Open a New Account");
         System.out.println("B: Deposit Money");
@@ -81,7 +72,7 @@ public class Main implements Serializable {
                     password = scanner.next();
                     newcustomer = new Customer(name, email, address, username, password, new Date());
                     customerList.add(newcustomer);
-                    // writeFile();
+                    saveToFile(newcustomer);
                 } else {
                     // Once the customer is created the user is asked to input the account type
                     System.out.println("Please, enter the account type. (current, deposit, savings)");
@@ -362,13 +353,13 @@ public class Main implements Serializable {
             case "G":
                 System.out.println("G: SEARCH ALL CURRENT ACCOUNTS");
                 for (Customer customer : customerList) {
-                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    int sumOfAccounts = customer.getNoOfCurrentAccounts() + customer.getNoOfDepositAccount() + customer.getNoOfSavingsAccounts();
                     for (int i = 0; i < sumOfAccounts; i++) {
-                        if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
-                            double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                        if (customer.getCustomerAccounts().get(i).type.equals("Current")) {
+                            double balance = customer.queryAccountBalance(customer.getCustomerAccounts().get(i));
                             if (balance >= 15240) {
-                                System.out.println("Name: " + newcustomer.getName());
-                                System.out.println("Email: " + newcustomer.getEmail());
+                                System.out.println("Name: " + customer.getName());
+                                System.out.println("Email: " + customer.getEmail());
                             }
                         }
                     }
@@ -377,30 +368,53 @@ public class Main implements Serializable {
         }
     }
 
-    /* //Method for writing the file - FILE_NAME
-    private static void writeFile() throws IOException {
-        FileOutputStream fo = new FileOutputStream(file);
-        ObjectOutputStream output = new ObjectOutputStream(fo);
-        for (Customer customer : customerList) {
-            output.writeObject(customer);
-        }
-        output.close();
-        fo.close();
-    } */
-
-
-    /* //Method for reading the file
-    private static void readFile() throws IOException, ClassNotFoundException {
-        FileInputStream fi = new FileInputStream(file);
-        ObjectInputStream input = new ObjectInputStream(fi);
+    // Method for saving a Customer object to a file
+    private static void saveToFile(Customer customer) throws Exception {
         try {
-            while (true) {
-                Customer cust = (Customer) input.readObject();
-                customerList.add(cust);
-            }
-        } catch(EOFException eof){
+            FileOutputStream fileOut = new FileOutputStream("customers.dat");
+            ObjectOutputStream streamOut = new ObjectOutputStream(fileOut);
+
+            streamOut.writeObject(customer);
+            streamOut.close();
         }
-    } */
+        catch (EOFException ex) {
+            System.out.println("End of file reached.");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("Customer details are saved");
+    }
+
+    // Method for loading Customer objects to a list
+    private static List<Customer> customerList() throws Exception {
+        List<Customer> customerList = new ArrayList<>();
+        try {
+            FileInputStream fileIn = new FileInputStream("customers.dat");
+            ObjectInputStream streamIn = new ObjectInputStream(fileIn);
+
+            Customer obj = null;
+
+            while ((obj = (Customer) streamIn.readObject()) != null) {
+                Customer customer = obj;
+                customerList.add(customer);
+                System.out.println("Loading customers finished");
+            }
+            streamIn.close();
+        }
+        catch (EOFException ex) { //This exception will be caught when EOF is reached
+            System.out.println("End of file reached.");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("All customers loaded");
+        return customerList;
+    }
 
     // Example and some uses on Stack Overflow thread here
     // http://stackoverflow.com/questions/9375882/how-i-can-run-my-timertask-everyday-2-pm
