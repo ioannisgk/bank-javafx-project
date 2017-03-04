@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
 /**
- * Customer class
+ * Main class
  **/
 
 public class Main implements Serializable {
@@ -36,31 +36,345 @@ public class Main implements Serializable {
     //The scanner is used to read input data
     private static Scanner scanner = new Scanner(System.in);
 
-    //Methods used while choosing an option in the menu
-    private static void deposit(Customer newcust, int i) throws IOException, ClassNotFoundException {
-        System.out.println("Please, input the amount you would like to deposit.");
-        double amount = scanner.nextDouble();
-        newcust.deposit(newcust.getCustomerAccounts().get(i), amount);
-        System.out.println("Press ENTER to continue!");
-        System.in.read();
-        showMenu();
-    }
+    ///////////////////////////////////////////////////////////////////
 
-    private static void withdraw(Customer newcust, int i) throws IOException, ClassNotFoundException {
-        System.out.println("Please, input the amount you would like to withdraw.");
-        double amount = scanner.nextDouble();
-        newcust.withdraw(newcust.getCustomerAccounts().get(i), amount);
-        System.out.println("Press ENTER to continue!");
-        System.in.read();
-        showMenu();
-    }
+    // Main method
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        // showMenu();
+        System.out.println("Welcome!!!");
+        System.out.println("A: Open a New Account");
+        System.out.println("B: Deposit Money");
+        System.out.println("C: Withdraw Money");
+        System.out.println("D: Query Account Balance");
+        System.out.println("E: Query Account Details");
+        System.out.println("F: Query Account Details (without username/password)");
+        System.out.println("G: Search all Current Accounts");
 
-    private static void balance(Customer newcust, int i) throws IOException, ClassNotFoundException {
-        double balance = newcust.queryAccountBalance(newcust.getCustomerAccounts().get(i));
-        System.out.println("Your current balance is £" + balance);
-        System.out.println("Press ENTER to continue!");
-        System.in.read();
-        showMenu();
+        boolean exists = false;
+        String input = scanner.next();
+        Customer newcustomer = new Customer();
+
+        switch (input.toUpperCase()) {
+            case "A":
+                System.out.println("A: OPENING ACCOUNT");
+                System.out.println("Enter your username: ");
+                String username = scanner.next();
+                System.out.println("Enter your password: ");
+                String password = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (!exists) {
+                    System.out.println("Invalid username or password!\nPlease, create a new Customer.");
+                    System.out.println("Please, input your name.");
+                    String name = scanner.next();
+                    System.out.println("Please, input your email address.");
+                    String email = scanner.next();
+                    System.out.println("Please, input your address.");
+                    String address = scanner.next();
+                    System.out.println("Please, input your username.");
+                    username = scanner.next();
+                    System.out.println("Please, input your password.");
+                    password = scanner.next();
+                    newcustomer = new Customer(name, email, address, username, password, new Date());
+                    customerList.add(newcustomer);
+                    // writeFile();
+                } else {
+                    // Once the customer is created the user is asked to input the account type
+                    System.out.println("Please, enter the account type. (current, deposit, savings)");
+                    String type = scanner.next();
+                    switch (type.toLowerCase()) {
+                        case "current":
+                            customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
+                            break;
+                        case "deposit":
+                            customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
+                            break;
+                        case "savings":
+                            System.out.println("How many terms for this account? (1, 2, 3)");
+                            int terms = scanner.nextInt();
+                            customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, terms);
+                            break;
+                    }
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "B":
+                System.out.println("B: DEPOSIT MONEY");
+                System.out.println("Enter your username: ");
+                username = scanner.next();
+                System.out.println("Enter your password: ");
+                password = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    // Once the customer is created the user is asked to input the account type
+                    System.out.println("Please, enter the account type to deposit to. (current, deposit, savings)");
+                    String type = scanner.next();
+                    System.out.println("Please, input the amount you would like to deposit.");
+                    double amount = scanner.nextDouble();
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    switch (type.toLowerCase()) {
+                        case "current":
+                            if (newcustomer.getNoOfCurrentAccounts() == 1) {
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        newcustomer.deposit(newcustomer.getCustomerAccounts().get(i), amount);
+                                    }
+                                }
+
+                            } else if (newcustomer.getNoOfCurrentAccounts() == 2) {
+                                System.out.print("You have two current accounts. Please input an account ID (");
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        System.out.print(newcustomer.getCustomerAccounts().get(i).accountID + " ");
+                                    }
+                                }
+                                System.out.print(").\n");
+                                int selectedID = scanner.nextInt();
+
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (Integer.parseInt(newcustomer.getCustomerAccounts().get(i).accountID) == selectedID) {
+                                        newcustomer.deposit(newcustomer.getCustomerAccounts().get(i), amount);
+                                    }
+                                }
+                            }
+                            break;
+                        case "deposit":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Deposit")) {
+                                    newcustomer.deposit(newcustomer.getCustomerAccounts().get(i), amount);
+                                }
+                            }
+                            break;
+                        case "savings":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Savings")) {
+                                    newcustomer.deposit(newcustomer.getCustomerAccounts().get(i), amount);
+                                }
+                            }
+                            break;
+                    }
+                } else {
+                    System.out.println("Invalid username or password!");
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "C":
+                System.out.println("C: WITHDRAW MONEY");
+                System.out.println("Enter your username: ");
+                username = scanner.next();
+                System.out.println("Enter your password: ");
+                password = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    // Once the customer is created the user is asked to input the account type
+                    System.out.println("Please, enter the account type to withdraw from. (current, deposit, savings)");
+                    String type = scanner.next();
+                    System.out.println("Please, input the amount you would like to withdraw.");
+                    double amount = scanner.nextDouble();
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    switch (type.toLowerCase()) {
+                        case "current":
+                            if (newcustomer.getNoOfCurrentAccounts() == 1) {
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        newcustomer.withdraw(newcustomer.getCustomerAccounts().get(i), amount);
+                                    }
+                                }
+
+                            } else if (newcustomer.getNoOfCurrentAccounts() == 2) {
+                                System.out.print("You have two current accounts. Please input an account ID (");
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        System.out.print(newcustomer.getCustomerAccounts().get(i).accountID + " ");
+                                    }
+                                }
+                                System.out.print(").\n");
+                                int selectedID = scanner.nextInt();
+
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (Integer.parseInt(newcustomer.getCustomerAccounts().get(i).accountID) == selectedID) {
+                                        newcustomer.withdraw(newcustomer.getCustomerAccounts().get(i), amount);
+                                    }
+                                }
+                            }
+                            break;
+                        case "deposit":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Deposit")) {
+                                    newcustomer.withdraw(newcustomer.getCustomerAccounts().get(i), amount);
+                                }
+                            }
+                            break;
+                        case "savings":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Savings")) {
+                                    newcustomer.withdraw(newcustomer.getCustomerAccounts().get(i), amount);
+                                }
+                            }
+                            break;
+                    }
+                } else {
+                    System.out.println("Invalid username or password!");
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "D":
+                System.out.println("D: QUERY ACCOUNT BALANCE");
+                System.out.println("Enter your username: ");
+                username = scanner.next();
+                System.out.println("Enter your password: ");
+                password = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    // Once the customer is created the user is asked to input the account type
+                    System.out.println("Please, enter the account type to see its balance. (current, deposit, savings)");
+                    String type = scanner.next();
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    switch (type.toLowerCase()) {
+                        case "current":
+                            if (newcustomer.getNoOfCurrentAccounts() == 1) {
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                                        System.out.println("Your current balance is £" + balance);
+                                    }
+                                }
+
+                            } else if (newcustomer.getNoOfCurrentAccounts() == 2) {
+                                System.out.print("You have two current accounts. Please input an account ID (");
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                                        System.out.print(newcustomer.getCustomerAccounts().get(i).accountID + " ");
+                                    }
+                                }
+                                System.out.print(").\n");
+                                int selectedID = scanner.nextInt();
+
+                                for (int i = 0; i < sumOfAccounts; i++) {
+                                    if (Integer.parseInt(newcustomer.getCustomerAccounts().get(i).accountID) == selectedID) {
+                                        double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                                        System.out.println("Your current balance is £" + balance);
+                                    }
+                                }
+                            }
+                            break;
+                        case "deposit":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Deposit")) {
+                                    double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                                    System.out.println("Your current balance is £" + balance);
+                                }
+                            }
+                            break;
+                        case "savings":
+                            for (int i = 0; i < sumOfAccounts; i++) {
+                                if (newcustomer.getCustomerAccounts().get(i).type.equals("Savings")) {
+                                    double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                                    System.out.println("Your current balance is £" + balance);
+                                }
+                            }
+                            break;
+                    }
+                } else {
+                    System.out.println("Invalid username or password!");
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "E":
+                System.out.println("E: QUERY ACCOUNT DETAILS");
+                System.out.println("Enter your username: ");
+                username = scanner.next();
+                System.out.println("Enter your password: ");
+                password = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    for (int i = 0; i < sumOfAccounts; i++) {
+                        newcustomer.queryAccountDetails(newcustomer.getCustomerAccounts().get(i));
+                    }
+
+                } else {
+                    System.out.println("Invalid username or password!");
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "F":
+                System.out.println("F: QUERY ACCOUNT DETAILS WITHOUT USERNAME/PASS");
+                System.out.println("Please, enter your name.");
+                String name = scanner.next();
+                System.out.println("Please, enter your email.");
+                String email = scanner.next();
+                System.out.println("Please, enter your address");
+                String address = scanner.next();
+                for (Customer customer : customerList) {
+                    if (customer.getName().equals(name) && customer.getEmail().equals(email) && customer.getAddress().equals(address)) {
+                        newcustomer = customer;
+                        exists = true;
+                    }
+                }
+                if (exists) {
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    for (int i = 0; i < sumOfAccounts; i++) {
+                        newcustomer.queryAccountDetails(newcustomer.getCustomerAccounts().get(i));
+                    }
+
+                } else {
+                    System.out.println("Invalid username or password!");
+                }
+                System.out.println("Press ENTER to continue!");
+                System.in.read();
+                break;
+
+            case "G":
+                System.out.println("G: SEARCH ALL CURRENT ACCOUNTS");
+                for (Customer customer : customerList) {
+                    int sumOfAccounts = newcustomer.getNoOfCurrentAccounts() + newcustomer.getNoOfDepositAccount() + newcustomer.getNoOfSavingsAccounts();
+                    for (int i = 0; i < sumOfAccounts; i++) {
+                        if (newcustomer.getCustomerAccounts().get(i).type.equals("Current")) {
+                            double balance = newcustomer.queryAccountBalance(newcustomer.getCustomerAccounts().get(i));
+                            if (balance >= 15240) {
+                                System.out.println("Name: " + newcustomer.getName());
+                                System.out.println("Email: " + newcustomer.getEmail());
+                            }
+                        }
+                    }
+                }
+                break;
+        }
     }
 
     /* //Method for writing the file - FILE_NAME
@@ -88,373 +402,9 @@ public class Main implements Serializable {
         }
     } */
 
-    //Main
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        showMenu();
-    }
-
-
     // Example and some uses on Stack Overflow thread here
     // http://stackoverflow.com/questions/9375882/how-i-can-run-my-timertask-everyday-2-pm
     // Documentation http://docs.oracle.com/javase/7/docs/api/java/util/Timer.html#schedule(java.util.TimerTask,%20java.util.Date,%20long)
-
-    //Method for showing the possible choices on the menu
-    private static void showMenu() throws IOException, ClassNotFoundException {
-        //readFile();
-        createSchedulers();
-        System.out.println("Welcome!\nPlease, choose an option to continue");
-        System.out.println("A: Open a New Account");
-        System.out.println("B: Deposit Money");
-        System.out.println("C: Withdraw Money");
-        System.out.println("D: Query Account Balance");
-        System.out.println("E: Query Account Details");
-        System.out.println("F: Login");
-        showOptions();
-    }
-
-    //Method regarding the options connected to the menu
-    private static void showOptions() throws IOException, ClassNotFoundException {
-        boolean exists = false;
-        String input = scanner.next();
-        Customer newcust = new Customer();
-        switch (input.toUpperCase()) {
-            case "A":
-                System.out.println("Please, input your name");
-                String name = scanner.next();
-
-                //Checks whether a customer exists in the customerList
-                for (Customer customer : customerList) {
-                    if (customer.getName().equals(name)) {
-                        exists = true;
-                    }
-                }
-                if (!exists) {
-                    System.out.println("Sorry, this name is not a customer, yet.\nPlease, create a new Customer.");
-                    System.out.println("Please, input your name.");
-                    name = scanner.next();
-                    System.out.println("Please, input your email address.");
-                    String email = scanner.next();
-                    System.out.println("Please, input your address.");
-                    String address = scanner.next();
-                    System.out.println("Please, input your username.");
-                    String user = scanner.next();
-                    System.out.println("Please, input your password.");
-                    String pass = scanner.next();
-                    customer = new Customer(name, email, address, user, pass, new Date());
-                    customerList.add(customer);
-                    // writeFile();
-                } else {
-                    System.out.println("Welcome back, " + name + ".");
-                }
-                System.out.println("Open a New Account");
-                //Once the customer is created the user is asked to input the account type
-                System.out.println("Please, enter the account type. (current, deposit, savings)");
-                String acctype = scanner.next();
-                switch (acctype.toLowerCase()) {
-                    case "current":
-                        customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
-                        break;
-                    case "deposit":
-                        customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
-                        break;
-                    case "savings":
-                        customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, 0);
-                        break;
-                }
-                System.out.println("Press ENTER to continue!");
-                System.in.read();
-                showMenu();
-                break;
-            case "B":
-                System.out.println("Please, input your name");
-                name = scanner.next();
-                for (Customer customer : customerList) {
-                    if (customer.getName().equals(name)) {
-                        newcust = customer;
-                        exists = true;
-                    }
-                }
-                if (exists) {
-                    System.out.println("Deposit Money");
-                    System.out.println("Which account do you want to deposit money to(current, deposit, savings)?");
-                    //We first ask for a string - account, and then we check each account separately (same for: C and D)
-                    String acc = scanner.next();
-                    switch (acc.toLowerCase()) {
-                        case "current":
-                            if (newcust.getNoOfCurrentAccounts() == 1) {
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        deposit(newcust, i);
-                                    }
-                                }
-
-                            } else if (newcust.getNoOfCurrentAccounts() == 2) {
-                                System.out.print("You have two current accounts. Please, input an account ID (");
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        System.out.print(newcust.getCustomerAccounts().get(i).accountID + " ");
-                                    }
-                                }
-                                System.out.print(").\n");
-                                int curid = scanner.nextInt();
-                                System.out.println("Please, input the amount you want to deposit");
-                                int amount = scanner.nextInt();
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (Integer.parseInt(newcust.getCustomerAccounts().get(i).accountID) == curid) {
-                                        newcust.deposit(newcust.getCustomerAccounts().get(i), amount);
-                                    }
-                                }
-                                System.out.println("Press ENTER to continue!");
-                                System.in.read();
-                                showMenu();
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                        case "deposit":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Deposit")) {
-                                    deposit(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-
-                            break;
-                        case "savings":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Savings")) {
-                                    deposit(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                    }
-                } else {
-                    System.out.println("There is no such customer, please create one.");
-                    System.out.println("Press ENTER to continue!");
-                    System.in.read();
-                    showMenu();
-                }
-                break;
-            case "C":
-                System.out.println("Please, input your name");
-                name = scanner.next();
-                for (Customer customer : customerList) {
-                    if (customer.getName().equals(name)) {
-                        newcust = customer;
-                        exists = true;
-                    }
-                }
-                if (exists) {
-                    System.out.println("Deposit Money");
-                    System.out.println("Which account do you want to withdraw money from(current, deposit, savings)?");
-                    String acc = scanner.next();
-                    switch (acc.toLowerCase()) {
-                        case "current":
-                            if (newcust.getNoOfCurrentAccounts() == 1) {
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        withdraw(newcust, i);
-                                    }
-                                }
-
-                            } else if (newcust.getNoOfCurrentAccounts() == 2) {
-                                System.out.print("You have two current accounts. Please, input an account ID (");
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        System.out.print(newcust.getCustomerAccounts().get(i).accountID + " ");
-                                    }
-                                }
-                                System.out.print(").\n");
-                                int curid = scanner.nextInt();
-                                System.out.println("Please, input the amount you want to withdraw");
-                                int amount = scanner.nextInt();
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (Integer.parseInt(newcust.getCustomerAccounts().get(i).accountID) == curid) {
-                                        newcust.withdraw(newcust.getCustomerAccounts().get(i), amount);
-                                    }
-                                }
-                                System.out.println("Press ENTER to continue!");
-                                System.in.read();
-                                showMenu();
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                        case "deposit":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Deposit")) {
-                                    withdraw(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-
-                            break;
-                        case "savings":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Savings")) {
-                                    withdraw(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                    }
-                } else {
-                    System.out.println("There is no such customer, please create one.");
-                    System.out.println("Press ENTER to continue!");
-                    System.in.read();
-                    showMenu();
-                }
-                break;
-            case "D":
-                System.out.println("Please, enter your name.");
-                name = scanner.next();
-
-                for (Customer customer : customerList) {
-                    if (customer.getName().equals(name)) {
-                        newcust = customer;
-                        exists = true;
-                    }
-                }
-
-                if (exists) {
-                    System.out.println("Query Account Balance");
-                    System.out.println("Which account do you want to see the balance from(current, deposit, savings)?");
-                    String acc = scanner.next();
-                    switch (acc.toLowerCase()) {
-                        case "current":
-                            if (newcust.getNoOfCurrentAccounts() == 1) {
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        double balance = newcust.queryAccountBalance(newcust.getCustomerAccounts().get(i));
-                                        System.out.println("Your current balance is £" + balance);
-                                    }
-                                }
-
-                            } else if (newcust.getNoOfCurrentAccounts() == 2) {
-                                System.out.print("You have two current accounts. Please, input an account ID (");
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (newcust.getCustomerAccounts().get(i).type.equals("Current")) {
-                                        System.out.print(newcust.getCustomerAccounts().get(i).accountID + " ");
-                                    }
-                                }
-                                System.out.print(").\n");
-                                int curid = scanner.nextInt();
-                                for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                    if (Integer.parseInt(newcust.getCustomerAccounts().get(i).accountID) == curid) {
-                                        double balance = newcust.queryAccountBalance(newcust.getCustomerAccounts().get(i));
-                                        System.out.println("Your current balance is £" + balance);
-                                    }
-                                }
-                                System.out.println("Press ENTER to continue!");
-                                System.in.read();
-                                showMenu();
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                        case "deposit":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Deposit")) {
-                                    balance(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-
-                            break;
-                        case "savings":
-                            for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                                if (newcust.getCustomerAccounts().get(i).type.equals("Savings")) {
-                                    balance(newcust, i);
-                                }
-                            }
-                            System.out.println("There is no such account.");
-                            System.out.println("Press ENTER to continue!");
-                            System.in.read();
-                            showMenu();
-                            break;
-                    }
-                } else {
-                    System.out.println("There is no such customer, please create one.");
-                    System.out.println("Press ENTER to continue!");
-                    System.in.read();
-                    showMenu();
-                }
-                break;
-            case "E":
-                System.out.println("Query Account Details");
-                System.out.println("Please, enter your name.");
-                name = scanner.next();
-                System.out.println("Please, enter your email.");
-                String email = scanner.next();
-                System.out.println("Please, enter your address");
-                String address = scanner.next();
-                for (Customer customer : customerList) {
-                    if (customer.getName().equals(name) && customer.getEmail().equals(email) && customer.getAddress().equals(address)) {
-                        newcust = customer;
-                        exists = true;
-                    }
-                }
-                if (exists) {
-                    for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                        newcust.queryAccountDetails(newcust.getCustomerAccounts().get(i));
-                    }
-                } else {
-                    System.out.println("There is no customer with these data.");
-                }
-                System.out.println("Press ENTER to continue!");
-                System.in.read();
-                showMenu();
-                break;
-            case "F":
-                System.out.println("LOGIN");
-                System.out.println("Please, input your username: ");
-                String user = scanner.next();
-                System.out.println("Please, input your password: ");
-                String pass = scanner.next();
-                for (Customer customer : customerList) {
-                    if (customer.getUsername().equals(user) && customer.getPassword().equals(pass)) {
-                        newcust = customer;
-                        exists = true;
-                    }
-                }
-                if (exists) {
-                    System.out.println("Username: " + newcust.getUsername());
-                    System.out.println("Password: " + newcust.getPassword());
-                    for (int i = 0; i < newcust.getNoOfCurrentAccounts() + newcust.getNoOfDepositAccount() + newcust.getNoOfSavingsAccounts(); i++) {
-                        newcust.queryAccountDetails(newcust.getCustomerAccounts().get(i));
-                    }
-
-                } else {
-                    System.out.println("Invalid username or password!");
-                }
-                System.out.println("Press ENTER to continue!");
-                System.in.read();
-                showMenu();
-                break;
-        }
-    }
 
     private static void createSchedulers() {
         // Create daily scheduler and process all accounts each day
