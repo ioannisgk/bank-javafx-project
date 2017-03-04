@@ -40,7 +40,7 @@ public class MonthlyScheduledTask extends TimerTask {
                 double monthlyAvgBalance = account.getTotalMonthlyBalance() / 30;
                 // Calculate and apply interest to Deposit Account
                 double monthlyInterest = account.getInterest() / 12;
-                account.setBalance((monthlyInterest * monthlyInterest) + account.getBalance());
+                account.setBalance((monthlyAvgBalance * monthlyInterest) + account.getBalance());
                 // Reset total monthly balance for next month
                 account.setTotalMonthlyBalance(0);
 

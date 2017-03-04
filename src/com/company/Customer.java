@@ -7,6 +7,9 @@ import java.io.Serializable;
 
 /**
  * Customer class
+ * Task 1: It also has a list of Accounts as an attribute to keep track of customer's accounts
+ * Task 2: Open a new account only if limits of accounts have not been reached
+ * Task 3: The openNewAccount method increases the number of accounts created and adds it to the CustomerAccounts list
  **/
 
 public class Customer implements Serializable {
@@ -17,13 +20,17 @@ public class Customer implements Serializable {
     private String username;
     private String password;
     private Date dateOfBirth;
-    private int noOfSavingsAccounts;
-    private int noOfDepositAccount;
-    private int noOfCurrentAccounts;
+    private int noOfSavingsAccounts = 0;
+    private int noOfDepositAccount = 0;
+    private int noOfCurrentAccounts = 0;
 
     public static final int MAX_CURRENT_ACCOUNTS = 2;
     public static final int MAX_DEPOSIT_ACCOUNTS = 1;
     public static final int MAX_SAVINGS_ACCOUNTS = 1;
+
+    public Customer() {
+
+    }
 
     // Class constructor
     public Customer(String name, String email, String address, String username, String password, Date dateOfBirth) {
@@ -35,106 +42,40 @@ public class Customer implements Serializable {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Customer() {
-
-    }
-
     // List of all accounts that the customer has opened
     // http://stackoverflow.com/questions/14903145/what-is-the-difference-between-list-and-arraylist (polymorphism)
     private List<Account> customerAccounts = new ArrayList<>(0);
-    public List<Customer> customerList = new ArrayList<>();
 
-    // Getters and setters for Customer class
+    // Class getters
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getAddress() {
         return address;
     }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getUsername() {
         return username;
     }
-
-    public void setUsername(String userName) {
-        this.username = userName;
-    }
-
     public String getPassword() {
         return password;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public int getNoOfSavingsAccounts() {
-        return noOfSavingsAccounts;
-    }
-
-    public void setNoOfSavingsAccounts(int noOfSavingsAccounts) {
-        this.noOfSavingsAccounts = noOfSavingsAccounts;
-    }
-
+    public Date getDateOfBirth() { return dateOfBirth; }
+    public int getNoOfCurrentAccounts() { return noOfCurrentAccounts; }
     public int getNoOfDepositAccount() {
         return noOfDepositAccount;
     }
-
-    public void setNoOfDepositAccount(int noOfDepositAccount) {
-        this.noOfDepositAccount = noOfDepositAccount;
+    public int getNoOfSavingsAccounts() {
+        return noOfSavingsAccounts;
     }
-
-    public int getNoOfCurrentAccounts() {
-        return noOfCurrentAccounts;
-    }
-
-    public void setNoOfCurrentAccounts(int noOfCurrentAccounts) {
-        this.noOfCurrentAccounts = noOfCurrentAccounts;
-    }
-
     public List<Account> getCustomerAccounts() {
         return customerAccounts;
     }
 
-    public void setCustomerAccounts(List<Account> customerAccounts) {
-        this.customerAccounts = customerAccounts;
-    }
-
-    public List<Customer> getCustomers() {
-        return customerList;
-    }
-
-    public void setCustomers(List<Customer> customerList) {
-        this.customerList = customerList;
-    }
-
-    // Method for Customer to open new account
-    public void openAccount(String type, double balance) {
+    // Method for Customer to open a new Account
+    public void openNewAccount(String type, double balance, int terms) {
         if (balance < 0) {
             System.out.println("Customer cannot create account with negative balance");
         }
@@ -172,9 +113,9 @@ public class Customer implements Serializable {
                 if (this.noOfSavingsAccounts > MAX_SAVINGS_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
                 } else {
-                    Account savingsAccount = new SavingsAccount(this, balance);
-                    this.getCustomerAccounts().add(savingsAccount);
+                    Account savingsAccount = new SavingsAccount(this, balance, terms);
                     this.noOfSavingsAccounts = this.noOfSavingsAccounts + 1;
+                    this.getCustomerAccounts().add(savingsAccount);
                     Main.totalAccountsInSystem.add(savingsAccount);
                     System.out.println("Savings account created...");
                 }
@@ -198,7 +139,7 @@ public class Customer implements Serializable {
         account.showDetails();
     }
 
-    //Method to show account details from all Customer Accounts
+    // Method to show account details from all Customer Accounts
     public void queryAllAccountDetails() {
         for (Account account : customerAccounts) {
             account.showDetails();
@@ -209,8 +150,6 @@ public class Customer implements Serializable {
     public double queryAccountBalance(Account account) {
         return account.getBalance();
     }
-
-    // TODO: showDetails()
 
     // Print details of Customer
     public void showDetails() {

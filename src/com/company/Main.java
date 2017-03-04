@@ -21,15 +21,15 @@ public class Main implements Serializable {
     public static final String ACCOUNT_TYPE_CURRENT = "current";
 
     //Variables regarding writing the file
-    private static final File FILE_NAME = new File("customers.bin");
-
+    /* private static final File FILE_NAME = new File("customers.bin");
     private static final File file = new File("customers.bin");
     private static ObjectInputStream objectInput;
     private static FileInputStream fileInput;
     private static ObjectOutputStream objectOutput;
     private static FileOutputStream fileOutput;
+    */
 
-    //A new object of the class Customer is created
+    // A new object of the class Customer is created
     private static Customer customer = new Customer();
     private static List<Customer> customerList = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class Main implements Serializable {
         showMenu();
     }
 
-    //Method for writing the file - FILE_NAME
+    /* //Method for writing the file - FILE_NAME
     private static void writeFile() throws IOException {
         FileOutputStream fo = new FileOutputStream(file);
         ObjectOutputStream output = new ObjectOutputStream(fo);
@@ -72,10 +72,10 @@ public class Main implements Serializable {
         }
         output.close();
         fo.close();
-    }
+    } */
 
 
-    //Method for reading the file
+    /* //Method for reading the file
     private static void readFile() throws IOException, ClassNotFoundException {
         FileInputStream fi = new FileInputStream(file);
         ObjectInputStream input = new ObjectInputStream(fi);
@@ -86,7 +86,7 @@ public class Main implements Serializable {
             }
         } catch(EOFException eof){
         }
-    }
+    } */
 
     //Main
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -142,7 +142,7 @@ public class Main implements Serializable {
                     String pass = scanner.next();
                     customer = new Customer(name, email, address, user, pass, new Date());
                     customerList.add(customer);
-                    writeFile();
+                    // writeFile();
                 } else {
                     System.out.println("Welcome back, " + name + ".");
                 }
@@ -152,13 +152,13 @@ public class Main implements Serializable {
                 String acctype = scanner.next();
                 switch (acctype.toLowerCase()) {
                     case "current":
-                        customer.openAccount(ACCOUNT_TYPE_CURRENT, 0);
+                        customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
                         break;
                     case "deposit":
-                        customer.openAccount(ACCOUNT_TYPE_DEPOSIT, 0);
+                        customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
                         break;
                     case "savings":
-                        customer.openAccount(ACCOUNT_TYPE_SAVINGS, 0);
+                        customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, 0);
                         break;
                 }
                 System.out.println("Press ENTER to continue!");

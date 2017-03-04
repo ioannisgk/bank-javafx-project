@@ -3,6 +3,7 @@ import java.util.Date;
 
 /**
  * DepositAccount subclass
+ * Tasks: Inherits deposit and withdrawal methods from superclass
  **/
 
 public class DepositAccount extends Account {

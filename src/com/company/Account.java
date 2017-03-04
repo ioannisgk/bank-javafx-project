@@ -4,6 +4,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Account superclass
+ * Task 1: Special attributes "noOfDaysForOverdraftLimit" and "totalMonthlyBalance" for schedulers use
+ * Task 2: Provides general deposit and withdrawal methods which will be overridden if needed
  **/
 
 public class Account {
@@ -18,9 +20,6 @@ public class Account {
 
     // Used to save the state that the customer exceeded the overdraft limit
     protected boolean charging;
-
-    // Used to decide if the customer can withdraw
-    protected boolean approvedWithdrawal;
 
     // Used to generate unique AccountIDs, example:
     // http://stackoverflow.com/questions/1389736/how-do-i-create-a-unique-id-in-java
@@ -41,9 +40,6 @@ public class Account {
     // Class setters
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-    public void setCharging(boolean charging) {
-        this.charging = charging;
     }
     public double getTotalMonthlyBalance() {
         return totalMonthlyBalance;
@@ -69,31 +65,31 @@ public class Account {
         this.noOfDaysForOverdraftLimit = noOfDaysForOverdraftLimit;
     }
 
-    // Method that will be used by subclasses methods
-    public void showDetails() {
-
-    }
-
     // Method to deposit money
     public void deposit(double amount) {
-        if (amount >= 1) {
+        if (amount >= 10) {
             balance = balance + amount;
             System.out.println("You have made a deposit of £" + amount);
             System.out.println("Your current balance is £" + balance);
         } else {
-            System.out.println("Invalid amount, please enter an amount more than £1");
+            System.out.println("Invalid amount, please enter an amount more than £10");
         }
     }
 
     // Method to withdraw money
     public void withdraw(double amount) {
-        if (approvedWithdrawal) {
+        if (amount <= balance) {
             balance = balance - amount;
             System.out.println("You have made a withdrawal of £" + amount);
             System.out.println("Your current balance is £" + balance);
         } else {
             System.out.println("You have insufficient funds, please enter a smaller amount");
         }
+    }
+
+    // Method that will be used by subclasses methods
+    public void showDetails() {
+
     }
 
     // Method to generate unique AccountIDs

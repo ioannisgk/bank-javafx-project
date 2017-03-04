@@ -3,8 +3,8 @@ import java.util.List;
 import java.util.TimerTask;
 
 /**
- * Daily task 1: If customer exceeded the overdraft limit, increase charging days
- * Daily task 2: Keep track of total monthly balance
+ * Daily task 1: If customer exceeded the overdraft limit, increase charging days of CurrentAccount
+ * Daily task 2: Keep track of total monthly balance of DepositAccount
  **/
 
 public class DailyScheduledTask extends TimerTask {
@@ -30,6 +30,7 @@ public class DailyScheduledTask extends TimerTask {
                 if (account.getCharging() == true) {
                     account.setNoOfDaysForOverdraftLimit(account.getNoOfDaysForOverdraftLimit() + 1);
                 }
+            } else if (account instanceof DepositAccount) {
                 // Keep track of "TotalMonthlyBalance" by adding the current balance to it
                 account.setTotalMonthlyBalance(account.getTotalMonthlyBalance() + account.getBalance());
             }
