@@ -1,6 +1,8 @@
 package com.company;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Date;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -29,8 +31,8 @@ public class Account implements Serializable {
 
     // Used to generate unique AccountIDs, example:
     // http://stackoverflow.com/questions/1389736/how-do-i-create-a-unique-id-in-java
-    private static AtomicLong idCounter = new AtomicLong(1000001);
-    // private static AtomicLong idCounter = new AtomicLong(getAtomicLongNumber());
+    // private static AtomicLong idCounter = new AtomicLong(1000001);
+    private static AtomicLong idCounter = new AtomicLong(getAtomicLongNumber());
 
     // Used to keep track of total monthly balance
     private double totalMonthlyBalance = 0;
@@ -99,9 +101,37 @@ public class Account implements Serializable {
     	toString();
     }
 
-    // Method to generate unique AccountIDs
+    // Method to generate unique AccountIDs and save to file so every account has unique ID
     public static String createID() {
+        long longValue = idCounter.longValue();
+        BufferedWriter out = null;
+        try{
+            out = new BufferedWriter(new FileWriter("accounts.bin"));
+            // Save next value (incremented by 1) to file
+            out.write(++longValue + "\n");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Please add File named accounts.bin on project Location");
+            e.printStackTrace();
+        }
         return String.valueOf(idCounter.getAndIncrement());
+    }
+
+    public static long getAtomicLongNumber(){
+        // Load next ID number from file
+        int startValue = 1000001;
+        long number = (long) startValue;
+        try {
+            Scanner scanner = new Scanner(new File("accounts.bin"));
+            while(scanner.hasNextLong())
+            {
+                number = scanner.nextLong();
+                break;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return number;
     }
 
 	@Override
