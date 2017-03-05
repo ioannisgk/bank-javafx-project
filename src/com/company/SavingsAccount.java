@@ -12,7 +12,7 @@ public class SavingsAccount extends Account implements  Serializable {
 
     // Adding serial version ID
     // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
-    private static final long serialVersionUID = 1L;
+    //private static final long serialVersionUID = 1L;
 
 	// Class attributes
     private int terms;

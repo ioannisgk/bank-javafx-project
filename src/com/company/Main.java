@@ -384,13 +384,15 @@ public class Main implements Serializable {
     // Method for saving a Customer object to a file
     private static void saveToFile(Customer customer) throws Exception {
         try {
-            FileOutputStream fileOut = new FileOutputStream("customers.bin");
+            FileOutputStream fileOut = new FileOutputStream("customers.bin", true);
             ObjectOutputStream streamOut = new ObjectOutputStream(fileOut);
 
             streamOut.writeObject(customer);
-            // fileOut.flush();
+
+            // http://stackoverflow.com/questions/2340106/what-is-the-purpose-of-flush-in-java-streams
+            fileOut.flush();
             streamOut.close();
-            // fileOut.close();
+            fileOut.close();
         }
         catch (EOFException ex) {
             System.out.println("End of file reached.");
@@ -417,10 +419,12 @@ public class Main implements Serializable {
                 System.out.println(customer.getName());
                 System.out.println(customer.getPassword());
                 System.out.println("Loading customers finished");
+                streamIn = new ObjectInputStream(fileIn);
             }
             streamIn.close();
+            fileIn.close();
         }
-        catch (EOFException ex) { //This exception will be caught when EOF is reached
+        catch (EOFException ex) {
             System.out.println("End of file reached.");
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();

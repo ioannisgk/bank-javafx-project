@@ -30,6 +30,7 @@ public class Account implements Serializable {
     // Used to generate unique AccountIDs, example:
     // http://stackoverflow.com/questions/1389736/how-do-i-create-a-unique-id-in-java
     private static AtomicLong idCounter = new AtomicLong(1000001);
+    // private static AtomicLong idCounter = new AtomicLong(getAtomicLongNumber());
 
     // Used to keep track of total monthly balance
     private double totalMonthlyBalance = 0;
