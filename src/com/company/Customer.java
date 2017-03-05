@@ -1,9 +1,8 @@
 package com.company;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.io.Serializable;
 
 /**
  * Customer class
@@ -12,8 +11,13 @@ import java.io.Serializable;
  * Task 3: The openNewAccount method increases the number of accounts created and adds it to the CustomerAccounts list
  **/
 
-public class Customer {
-    // Class attributes
+public class Customer implements Serializable {
+
+    // Adding serial version ID
+    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
+    private static final long serialVersionUID = 1L;
+
+	// Class attributes
     private String name;
     private String email;
     private String address;
@@ -84,7 +88,7 @@ public class Customer {
 
             case Main.ACCOUNT_TYPE_CURRENT: {
                 // Open a Current Account and increase "noOfCurrentAccounts" by 1
-                if (this.noOfCurrentAccounts >= MAX_CURRENT_ACCOUNTS) {
+            	if (this.noOfCurrentAccounts >= MAX_CURRENT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_CURRENT_ACCOUNTS + " Current accounts");
                 } else {
                     Account currentAccount = new CurrentAccount(this, balance);
@@ -97,7 +101,7 @@ public class Customer {
             }
             case Main.ACCOUNT_TYPE_DEPOSIT: {
                 // Open a Deposit Account and increase "noOfDepositAccount" by 1
-                if (this.noOfDepositAccount > MAX_DEPOSIT_ACCOUNTS) {
+                if (this.noOfDepositAccount >= MAX_DEPOSIT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + " Deposit Accounts");
                 } else {
                     Account depositAccount = new DepositAccount(this, balance);
@@ -110,7 +114,7 @@ public class Customer {
             }
             case Main.ACCOUNT_TYPE_SAVINGS: {
                 // Open a Savings Account and increase "noOfSavingsAccounts" by 1
-                if (this.noOfSavingsAccounts > MAX_SAVINGS_ACCOUNTS) {
+                if (this.noOfSavingsAccounts >= MAX_SAVINGS_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
                 } else {
                     Account savingsAccount = new SavingsAccount(this, balance, terms);
@@ -164,30 +168,11 @@ public class Customer {
                 "Savings Accounts: " + noOfSavingsAccounts + "\n");
     }
 
-/*    //Method to write objects in a binary file
-    public void writeObject(java.io.ObjectOutputStream stream) throws IOException {
-        stream.writeObject(this.name);
-        stream.writeObject(this.email);
-        stream.writeObject(this.address);
-        stream.writeObject(this.username);
-        stream.writeObject(this.password);
-        stream.writeObject(this.dateOfBirth);
-        // stream.writeInt(noOfCurrentAccounts);
-        // stream.writeInt(noOfDepositAccount);
-        // stream.writeInt(noOfSavingsAccounts);
-    }
-
-    //Method to read objects from a binary file
-    public void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        name = stream.readObject().toString();
-        email = (String) stream.readObject();
-        address = (String) stream.readObject();
-        username = (String) stream.readObject();
-        password = (String) stream.readObject();
-        dateOfBirth = (Date) stream.readObject();
-        //noOfCurrentAccounts = stream.readInt();
-        //noOfDepositAccount = stream.readInt();
-        //noOfSavingsAccounts = stream.readInt();
-    }
-*/
+	@Override
+	public String toString() {
+		return "Customer [ name = " + name + ", email = " + email + ", address = " + address + ", username = " + username
+				+ ", password = " + password + ", dateOfBirth = " + dateOfBirth + ", noOfSavingsAccounts = "
+				+ noOfSavingsAccounts + ", noOfDepositAccount = " + noOfDepositAccount + ", noOfCurrentAccounts = "
+				+ noOfCurrentAccounts + ", customerAccounts = " + customerAccounts + " ]";
+	}
 }

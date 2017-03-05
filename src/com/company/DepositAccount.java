@@ -1,4 +1,5 @@
 package com.company;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -6,8 +7,13 @@ import java.util.Date;
  * Tasks: Inherits deposit and withdrawal methods from superclass
  **/
 
-public class DepositAccount extends Account {
-    // Constructor for subclass
+public class DepositAccount extends Account implements Serializable {
+
+    // Adding serial version ID
+    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
+    private static final long serialVersionUID = 1L;
+
+	// Constructor for subclass
     public DepositAccount(Customer customer, double balance) {
         super(customer, balance);
         type = "Deposit";

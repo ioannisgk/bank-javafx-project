@@ -1,15 +1,20 @@
 package com.company;
 import java.io.Serializable;
 import java.util.Date;
-import java.io.Serializable;
+
 /**
  * CurrentAccount subclass
  * Task 1: On deposit if overdraft limit is not exceeded, stop counting charging days
  * Task 2: On withdrawal if amount exceeds overdraft limit, allow up to maxlimit and start counting charging days
  **/
 
-public class CurrentAccount extends Account {
-    // Class attributes
+public class CurrentAccount extends Account implements Serializable {
+
+    // Adding serial version ID
+    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
+    private static final long serialVersionUID = 1L;
+
+	// Class attributes
     private double overdraft = 200;
     private double chargingFee = 10;
     private double maxlimit = 220;

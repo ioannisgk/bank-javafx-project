@@ -1,4 +1,5 @@
 package com.company;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -8,8 +9,13 @@ import java.util.concurrent.atomic.AtomicLong;
  * Task 2: Provides general deposit and withdrawal methods which will be overridden if needed
  **/
 
-public class Account {
-    // Class attributes
+public class Account implements Serializable {
+
+    // Adding serial version ID
+    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
+	private static final long serialVersionUID = 1L;
+
+	// Class attributes
     protected Date dateOpened;
     protected String sortcode;
     protected Customer customer;
@@ -41,11 +47,11 @@ public class Account {
     public void setBalance(double balance) {
         this.balance = balance;
     }
-    public double getTotalMonthlyBalance() {
-        return totalMonthlyBalance;
+    public void setTotalMonthlyBalance(double totalMonthlyBalance) {
+        this.totalMonthlyBalance = totalMonthlyBalance;
     }
-    public int getNoOfDaysForOverdraftLimit() {
-        return noOfDaysForOverdraftLimit;
+    public void setNoOfDaysForOverdraftLimit(int noOfDaysForOverdraftLimit) {
+        this.noOfDaysForOverdraftLimit = noOfDaysForOverdraftLimit;
     }
 
     // Class getters
@@ -58,11 +64,11 @@ public class Account {
     public boolean getCharging() {
         return charging;
     }
-    public void setTotalMonthlyBalance(double totalMonthlyBalance) {
-        this.totalMonthlyBalance = totalMonthlyBalance;
+    public double getTotalMonthlyBalance() {
+        return totalMonthlyBalance;
     }
-    public void setNoOfDaysForOverdraftLimit(int noOfDaysForOverdraftLimit) {
-        this.noOfDaysForOverdraftLimit = noOfDaysForOverdraftLimit;
+    public int getNoOfDaysForOverdraftLimit() {
+        return noOfDaysForOverdraftLimit;
     }
 
     // Method to deposit money
@@ -89,11 +95,18 @@ public class Account {
 
     // Method that will be used by subclasses methods
     public void showDetails() {
-
+    	toString();
     }
 
     // Method to generate unique AccountIDs
     public static String createID() {
         return String.valueOf(idCounter.getAndIncrement());
     }
+
+	@Override
+	public String toString() {
+		return "Account [ dateOpened = " + dateOpened + ", sortcode = " + sortcode +  ", type = "
+				+ type + ", balance = " + balance + ", interest = " + interest + ", accountID = " + accountID + ", charging = "
+				+ charging + " ]";
+	}
 }

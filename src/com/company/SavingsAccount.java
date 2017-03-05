@@ -1,4 +1,5 @@
 package com.company;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,8 +8,13 @@ import java.util.Date;
  * Task 2: Do not allow withdrawal for this type of account
  **/
 
-public class SavingsAccount extends Account {
-    // Class attributes
+public class SavingsAccount extends Account implements  Serializable {
+
+    // Adding serial version ID
+    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
+    private static final long serialVersionUID = 1L;
+
+	// Class attributes
     private int terms;
     private double upperLimit = 15240;
 
