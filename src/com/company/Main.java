@@ -390,7 +390,7 @@ public class Main implements Serializable {
             streamOut.writeObject(customer);
 
             // http://stackoverflow.com/questions/2340106/what-is-the-purpose-of-flush-in-java-streams
-            fileOut.flush();
+            // fileOut.flush();
             streamOut.close();
             fileOut.close();
         }
