@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
 
+import static javafx.application.Application.launch;
+
 /**
  * Main class
  **/
@@ -26,10 +28,19 @@ public class Main implements Serializable {
 
     // Main method
     public static void main(String[] args) throws Exception {
-    	customerList = customerList();
+        // showConsoleMenu();
+
+        View view = new View();
+        view.run(args);
+    }
+
+    // Main method
+    public static void showConsoleMenu() throws Exception {
+
+        customerList = customerList();
         boolean s = true;
         while (s) {
-        	
+
             System.out.println("Welcome!!!");
             System.out.println("A: Open a New Account");
             System.out.println("B: Deposit Money");
@@ -84,9 +95,9 @@ public class Main implements Serializable {
                                 System.out.println(newcustomer.toString());
                                 break;
                             case "deposit":
-                            	newcustomer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
-                            	System.out.println(newcustomer.toString());
-                            	saveToFile(newcustomer);
+                                newcustomer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
+                                System.out.println(newcustomer.toString());
+                                saveToFile(newcustomer);
                                 break;
                             case "savings":
                                 System.out.println("How many terms for this account? (1, 2, 3)");
