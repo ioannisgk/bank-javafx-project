@@ -10,9 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.io.FileInputStream;
-
 import static javafx.application.Application.launch;
 
 public class View extends Application {
@@ -70,25 +68,49 @@ public class View extends Application {
         ImageView iv = new ImageView(image);
         iv.setFitWidth(500);
         iv.setFitHeight(144);
-        HBox hbox = new HBox(iv);
 
+        // Create different elements
+        Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
+        Button button1 = new Button("Open a New Account");
+        Button button2 = new Button("Process an Account");
+        Button button3 = new Button("Search Current Accounts");
+        Button buttonLogout = new Button("Logout");
+        buttonLogout.setOnAction(e -> logout());
+        Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
+        // Set a Column of Buttons to the Same Width
+        // http://docs.oracle.com/javafx/2/layout/size_align.htm
+        button1.setMaxWidth(Double.MAX_VALUE);
+        button2.setMaxWidth(Double.MAX_VALUE);
+        button3.setMaxWidth(Double.MAX_VALUE);
+        buttonLogout.setMaxWidth(Double.MAX_VALUE);
 
-        sceneMain = new Scene(hbox, 600, 300);
+        // Set layout: vbox1 for Top, hbox1 for Center, hbox2 for Bottom
+        VBox vbox1 = new VBox();
+        vbox1.setPadding(new Insets(50, 50, 20, 50));
+        VBox vbox2 = new VBox(10);
+        vbox2.setPadding(new Insets(0, 80, 10, 0));
+        HBox hbox1 = new HBox();
+        hbox1.setPadding(new Insets(0, 0, 10, 50));
+        HBox hbox2 = new HBox();
+        hbox2.setPadding(new Insets(0, 50, 10, 50));
 
+        // Add elements to layouts
+        vbox1.getChildren().addAll(iv);
+        vbox2.getChildren().addAll(button1, button2, button3, buttonLogout);
+        hbox1.getChildren().addAll(label1);
+        hbox2.getChildren().addAll(label2);
 
+        // Add layouts to borderpane
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/layout/BorderPane.html
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(vbox1);
+        borderPane.setRight(vbox2);
+        borderPane.setCenter(hbox1);
+        borderPane.setBottom(hbox2);
 
-        ////
-
-        // Label and button for sceneLogin
-        //Label labelMain = new Label("Please select an action");
-        //Button buttonLogout = new Button("Logout");
-        //buttonLogout.setOnAction(e -> logout());
-
-        // Set layout with label and button to create scene
-        //StackPane layoutMain = new StackPane();
-        //layoutMain.getChildren().add(buttonLogout);
-        //sceneMain = new Scene(layoutMain, 600, 300);
+        // Create "sceneMain"
+        sceneMain = new Scene(borderPane, 600, 400);
 
         ///////////////////////////////////////////////////////
 
