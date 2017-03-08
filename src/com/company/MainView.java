@@ -1,7 +1,6 @@
 package com.company;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,14 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileInputStream;
-import static javafx.application.Application.launch;
 
-public class View extends Application {
+public class MainView extends Application {
 
     Stage window;
     Scene sceneLogin, sceneMain;
 
-    public View () {
+    public MainView () {
 
     }
 
@@ -30,6 +28,10 @@ public class View extends Application {
 
         window = mainStage;
         window.setTitle("Bank Application");
+
+        ///////////////////////////////////
+        //////// CREATE SCENELOGIN ////////
+        ///////////////////////////////////
 
         // GridPane layout with 10px padding
         GridPane gridLogin = new GridPane();
@@ -60,29 +62,31 @@ public class View extends Application {
         gridLogin.getChildren().addAll(labelUsername, username, labelPassword, password, buttonLogin);
         sceneLogin = new Scene(gridLogin, 300, 200);
 
-        //////////////////////////////////////////////////////
+        //////////////////////////////////
+        //////// CREATE SCENEMAIN ////////
+        //////////////////////////////////
 
         // http://tutorials.jenkov.com/javafx/imageview.html
         FileInputStream imageFile = new FileInputStream("bank_logo.png");
         Image image = new Image(imageFile);
-        ImageView iv = new ImageView(image);
-        iv.setFitWidth(500);
-        iv.setFitHeight(144);
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(500);
+        imageView.setFitHeight(144);
 
         // Create different elements
         Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
-        Button button1 = new Button("Open a New Account");
-        Button button2 = new Button("Process an Account");
-        Button button3 = new Button("Search Current Accounts");
+        Button buttonNewAccount = new Button("Open a New Account");
+        Button buttonProcessAccount = new Button("Process an Account");
+        Button buttonSearchAccounts = new Button("Search Current Accounts");
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(e -> logout());
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
-        button1.setMaxWidth(Double.MAX_VALUE);
-        button2.setMaxWidth(Double.MAX_VALUE);
-        button3.setMaxWidth(Double.MAX_VALUE);
+        buttonNewAccount.setMaxWidth(Double.MAX_VALUE);
+        buttonProcessAccount.setMaxWidth(Double.MAX_VALUE);
+        buttonSearchAccounts.setMaxWidth(Double.MAX_VALUE);
         buttonLogout.setMaxWidth(Double.MAX_VALUE);
 
         // Set layout: vbox1 for Top, hbox1 for Center, hbox2 for Bottom
@@ -96,8 +100,8 @@ public class View extends Application {
         hbox2.setPadding(new Insets(0, 50, 10, 50));
 
         // Add elements to layouts
-        vbox1.getChildren().addAll(iv);
-        vbox2.getChildren().addAll(button1, button2, button3, buttonLogout);
+        vbox1.getChildren().addAll(imageView);
+        vbox2.getChildren().addAll(buttonNewAccount, buttonProcessAccount, buttonSearchAccounts, buttonLogout);
         hbox1.getChildren().addAll(label1);
         hbox2.getChildren().addAll(label2);
 
@@ -112,10 +116,11 @@ public class View extends Application {
         // Create "sceneMain"
         sceneMain = new Scene(borderPane, 600, 400);
 
-        ///////////////////////////////////////////////////////
+        ////////////////////////////////////
+        //////// DISPLAY SCENELOGIN ////////
+        ////////////////////////////////////
 
         // Display "sceneLogin" when starting the application
-
         window.setScene(sceneLogin);
         window.setOnCloseRequest(e -> {
             // Prevent default close action with consume()

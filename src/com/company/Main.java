@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
 
-import static javafx.application.Application.launch;
-
 /**
  * Main class
  **/
@@ -30,8 +28,11 @@ public class Main implements Serializable {
     public static void main(String[] args) throws Exception {
         // showConsoleMenu();
 
-        View view = new View();
-        view.run(args);
+        //MainView mainView = new MainView();
+        //mainView.run(args);
+
+        NewAccountView newAccountview = new NewAccountView();
+        newAccountview.run(args);
     }
 
     // Main method
