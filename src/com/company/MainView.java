@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 public class MainView extends Application {
 
     Stage window;
-    Scene sceneLogin, sceneMain;
+    Scene sceneLogin, sceneMain, sceneEnterInfo;
 
     public MainView () {
 
@@ -76,6 +76,7 @@ public class MainView extends Application {
         // Create different elements
         Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
         Button buttonNewAccount = new Button("Open a New Account");
+        buttonNewAccount.setOnAction(e -> window.setScene(sceneEnterInfo));
         Button buttonProcessAccount = new Button("Process an Account");
         Button buttonSearchAccounts = new Button("Search Current Accounts");
         Button buttonLogout = new Button("Logout");
@@ -116,6 +117,60 @@ public class MainView extends Application {
         // Create "sceneMain"
         sceneMain = new Scene(borderPane, 600, 400);
 
+        ///////////////////////////////////////
+        //////// CREATE SCENEENTERINFO ////////
+        ///////////////////////////////////////
+
+        // GridPane layout with 10px padding
+        GridPane gridEnterInfo = new GridPane();
+        gridEnterInfo.setPadding(new Insets(10, 20, 10, 30));
+        gridEnterInfo.setVgap(8);
+        gridEnterInfo.setHgap(10);
+
+        // Label and text field for firstname
+        Label labelFirstname = new Label("Firstname:");
+        GridPane.setConstraints(labelFirstname, 0, 0);
+        TextField firstname = new TextField();
+        firstname.setPromptText("firstname");
+        GridPane.setConstraints(firstname, 1, 0);
+
+        // Label and text field for surname
+        Label labelSurname = new Label("Surname:");
+        GridPane.setConstraints(labelSurname, 0, 1);
+        TextField surname = new TextField();
+        surname.setPromptText("surname");
+        GridPane.setConstraints(surname, 1, 1);
+
+        // Label and text field for date of birth
+        Label labelDate = new Label("Date of birth:");
+        GridPane.setConstraints(labelDate, 0, 2);
+        TextField dob = new TextField();
+        dob.setPromptText("DDMMYYYY");
+        GridPane.setConstraints(dob, 1, 2);
+
+        // Button for returning back to main
+        Button buttonCancel = new Button("Cancel");
+        GridPane.setConstraints(buttonCancel, 0, 4);
+        buttonCancel.setOnAction(e -> window.setScene(sceneMain));
+        buttonCancel.setMinWidth(70.0);
+
+        // Button for next screen
+        // A new view object will be created and we will access next scene
+        Button buttonCheck = new Button("Next");
+        GridPane.setConstraints(buttonCheck, 1, 4);
+        buttonCheck.setOnAction(e -> {
+            try {
+                openNewAccount();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        buttonCheck.setMinWidth(70.0);
+
+        // Add elements to layout and create "sceneLogin"
+        gridEnterInfo.getChildren().addAll(labelFirstname, firstname, labelSurname, surname, labelDate, dob, buttonCancel, buttonCheck);
+        sceneEnterInfo = new Scene(gridEnterInfo, 320, 180);
+
         ////////////////////////////////////
         //////// DISPLAY SCENELOGIN ////////
         ////////////////////////////////////
@@ -145,5 +200,10 @@ public class MainView extends Application {
             window.setResizable(!window.isResizable());
             window.setResizable(window.isResizable());
         }
+    }
+
+    private void openNewAccount() throws Exception {
+        NewAccountView newAccountview = new NewAccountView();
+        newAccountview.start(window);
     }
 }

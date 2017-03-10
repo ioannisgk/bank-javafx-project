@@ -23,21 +23,22 @@ public class NewAccountView extends Application {
     public static void run (String[] args) {
         launch(args);
     }
-    @Override
+    //@Override
     public void start (Stage mainStage) throws Exception {
 
         window = mainStage;
-        window.setTitle("Bank Application");
+        window.setTitle("Bank Application222");
 
-        ///////////////////////////////////
+        ///////////////////////////////////////
         //////// CREATE SCENEENTERINFO ////////
-        ///////////////////////////////////
+        ///////////////////////////////////////
 
         // GridPane layout with 10px padding
-        GridPane gridEnterInfo = new GridPane();
-        gridEnterInfo.setPadding(new Insets(10, 10, 10, 10));
-        gridEnterInfo.setVgap(8);
-        gridEnterInfo.setHgap(10);
+        GridPane gridOpenAccount = new GridPane();
+        gridOpenAccount.setPadding(new Insets(10, 20, 0, 30));
+        gridOpenAccount.setVgap(20);
+        gridOpenAccount.setHgap(0);
+        //gridOpenAccount.setMinHeight(200);
 
         // Label and text field for firstname
         Label labelFirstname = new Label("Firstname:");
@@ -59,26 +60,27 @@ public class NewAccountView extends Application {
         TextField dob = new TextField();
         dob.setPromptText("DDMMYYYY");
         GridPane.setConstraints(dob, 1, 2);
+/*
+        // Label and text field for phone
+        Label labelPhone = new Label("Phone");
+        GridPane.setConstraints(labelDate, 0, 4);
+        TextField phone = new TextField();
+        dob.setPromptText("phone");
+        GridPane.setConstraints(dob, 1, 4);
 
-        // Button for login
-        Button buttonCheck = new Button("Check if customer is registered");
-        GridPane.setConstraints(buttonCheck, 1, 3);
-        buttonCheck.setOnAction(e -> window.setScene(sceneMain));
-
-        // Add elements to layout and create "sceneLogin"
-        gridEnterInfo.getChildren().addAll(labelFirstname, firstname, labelSurname, surname, labelDate, dob, buttonCheck);
-        sceneEnterInfo = new Scene(gridEnterInfo, 300, 200);
+        // Label and text field for email
+        Label labelEmail = new Label("Email");
+        GridPane.setConstraints(labelDate, 0, 5);
+        TextField email = new TextField();
+        dob.setPromptText("email");
+        GridPane.setConstraints(dob, 1, 5);
+*/
+        // Add elements to layout and create scene
+        gridOpenAccount.getChildren().addAll(labelFirstname, firstname, labelSurname, surname, labelDate, dob);
 
         //////////////////////////////////
         //////// CREATE SCENEMAIN ////////
         //////////////////////////////////
-
-        // http://tutorials.jenkov.com/javafx/imageview.html
-        FileInputStream imageFile = new FileInputStream("bank_logo.png");
-        Image image = new Image(imageFile);
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(500);
-        imageView.setFitHeight(144);
 
         // Create different elements
         Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
@@ -86,7 +88,7 @@ public class NewAccountView extends Application {
         Button buttonProcessAccount = new Button("Process an Account");
         Button buttonSearchAccounts = new Button("Search Current Accounts");
         Button buttonLogout = new Button("Logout");
-        buttonLogout.setOnAction(e -> logout());
+        // buttonLogout.setOnAction(e -> logout());
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
@@ -97,8 +99,8 @@ public class NewAccountView extends Application {
         buttonLogout.setMaxWidth(Double.MAX_VALUE);
 
         // Set layout: vbox1 for Top, hbox1 for Center, hbox2 for Bottom
-        VBox vbox1 = new VBox();
-        vbox1.setPadding(new Insets(50, 50, 20, 50));
+        //VBox vbox1 = new VBox();
+        //vbox1.setPadding(new Insets(50, 50, 20, 50));
         VBox vbox2 = new VBox(10);
         vbox2.setPadding(new Insets(0, 80, 10, 0));
         HBox hbox1 = new HBox();
@@ -107,7 +109,7 @@ public class NewAccountView extends Application {
         hbox2.setPadding(new Insets(0, 50, 10, 50));
 
         // Add elements to layouts
-        vbox1.getChildren().addAll(imageView);
+        //vbox1.getChildren().addAll(hboxFirstname);
         vbox2.getChildren().addAll(buttonNewAccount, buttonProcessAccount, buttonSearchAccounts, buttonLogout);
         hbox1.getChildren().addAll(label1);
         hbox2.getChildren().addAll(label2);
@@ -115,7 +117,7 @@ public class NewAccountView extends Application {
         // Add layouts to borderpane
         // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/layout/BorderPane.html
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(vbox1);
+        borderPane.setTop(gridOpenAccount);
         borderPane.setRight(vbox2);
         borderPane.setCenter(hbox1);
         borderPane.setBottom(hbox2);
@@ -123,12 +125,12 @@ public class NewAccountView extends Application {
         // Create "sceneMain"
         sceneMain = new Scene(borderPane, 600, 400);
 
-        ////////////////////////////////////
-        //////// DISPLAY SCENELOGIN ////////
-        ////////////////////////////////////
+        ////////////////////////////////////////
+        //////// DISPLAY SCENEENTERINFO ////////
+        ////////////////////////////////////////
 
-        // Display "sceneLogin" when starting the application
-        window.setScene(sceneEnterInfo);
+        // Display "sceneEnterInfo" when starting the application
+        window.setScene(sceneMain);
         window.setOnCloseRequest(e -> {
             // Prevent default close action with consume()
             e.consume();
@@ -141,16 +143,5 @@ public class NewAccountView extends Application {
         boolean answer;
         answer = ConfirmBox.display("Confirmation", "Are you sure you want to exit?");
         if (answer) { window.close(); }
-    }
-
-    private void logout() {
-        boolean answer;
-        answer = ConfirmBox.display("Confirmation", "Are you sure you want to logout?");
-        if (answer) {
-            //window.setScene(sceneLogin);
-            // Refresh windows size
-            window.setResizable(!window.isResizable());
-            window.setResizable(window.isResizable());
-        }
     }
 }
