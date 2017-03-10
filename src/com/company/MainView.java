@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 public class MainView extends Application {
 
     boolean session = false;
+    boolean process = false;
     Stage window;
     Scene sceneLogin, sceneMain, sceneEnterInfo;
 
@@ -86,11 +87,18 @@ public class MainView extends Application {
         Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
         Button buttonNewAccount = new Button("Open a New Account");
         buttonNewAccount.setOnAction(e -> {
+            process = false;
             window.setScene(sceneEnterInfo);
             window.setResizable(!window.isResizable());
             window.setResizable(window.isResizable());
         });
         Button buttonProcessAccount = new Button("Process an Account");
+        buttonProcessAccount.setOnAction(e -> {
+            process = true;
+            window.setScene(sceneEnterInfo);
+            window.setResizable(!window.isResizable());
+            window.setResizable(window.isResizable());
+        });
         Button buttonSearchAccounts = new Button("Search Current Accounts");
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(e -> logout());
@@ -173,7 +181,11 @@ public class MainView extends Application {
         GridPane.setConstraints(buttonCheck, 1, 4);
         buttonCheck.setOnAction(e -> {
             try {
-                openNewAccount();
+                if (!process) {
+                    openNewAccount();
+                } else {
+                    processAccount();
+                }
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -227,6 +239,27 @@ public class MainView extends Application {
         if (customerFound) {
             NewAccountView newAccountview = new NewAccountView();
             newAccountview.start(window);
+        } else {
+            answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
+            if (answer) {
+                NewCustomerView newCustomerview = new NewCustomerView();
+                newCustomerview.start(window);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            } else {
+                window.setScene(sceneMain);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            }
+        }
+    }
+
+    private void processAccount() throws Exception {
+        boolean customerFound = true;
+        boolean answer;
+        if (customerFound) {
+            ProcessAccountView processAccountView = new ProcessAccountView();
+            processAccountView.start(window);
         } else {
             answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
             if (answer) {
