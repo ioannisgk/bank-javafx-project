@@ -9,12 +9,12 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileInputStream;
 
-public class NewAccountView extends Application {
+public class NewCustomerView extends Application {
 
     Stage window;
-    Scene sceneNewAccount;
+    Scene sceneNewCustomer;
 
-    public NewAccountView () {
+    public NewCustomerView () {
 
     }
 
@@ -75,26 +75,30 @@ public class NewAccountView extends Application {
         email.setPromptText("email");
         GridPane.setConstraints(email, 1, 5);
 
+        // Label and text field for email
+        Label labelUsername = new Label("Username:");
+        GridPane.setConstraints(labelUsername, 0, 6);
+        TextField username = new TextField();
+        username.setPromptText("username");
+        GridPane.setConstraints(username, 1, 6);
+
+        // Label and text field for email
+        Label labelPassword = new Label("Password:");
+        GridPane.setConstraints(labelPassword, 0, 7);
+        TextField password = new TextField();
+        password.setPromptText("password");
+        GridPane.setConstraints(password, 1, 7);
+
         // Add elements to layout and create scene
-        gridOpenAccount.getChildren().addAll(labelTitle, labelFirstname, firstname, labelSurname, surname, labelDate, dob, labelPhone, phone, labelEmail, email);
+        gridOpenAccount.getChildren().addAll(labelTitle, labelFirstname, firstname, labelSurname,
+                surname, labelDate, dob, labelPhone, phone, labelEmail, email, labelUsername, username, labelPassword, password);
 
         ////////////////////////////////////////
         //////// CREATE SCENENEWACCOUNT ////////
         ////////////////////////////////////////
 
         // Create radio buttons to select account type
-        Label labelTitle2 = new Label("Select account type:");
-        ToggleGroup group = new ToggleGroup();
-        RadioButton rbCurrent = new RadioButton("Current");
-        rbCurrent.setUserData("Current");
-        rbCurrent.setToggleGroup(group);
-        rbCurrent.setSelected(true);
-        RadioButton rbDeposit = new RadioButton("Deposit");
-        rbDeposit.setUserData("Deposit");
-        rbDeposit.setToggleGroup(group);
-        RadioButton rbISA = new RadioButton("ISA");
-        rbISA.setUserData("ISA");
-        rbISA.setToggleGroup(group);
+        Label label1 = new Label("A new record will be created\nAll information will be saved");
 
         // Create open a new account and back to main button
         Button buttonCancel = new Button("Cancel");
@@ -105,25 +109,25 @@ public class NewAccountView extends Application {
                 e1.printStackTrace();
             }
         });
-        Button buttonNewAccount = new Button("Open a New Account");
+        Button buttonNewCustomer = new Button("Save Customer");
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
-        buttonNewAccount.setMaxWidth(Double.MAX_VALUE);
+        buttonNewCustomer.setMaxWidth(Double.MAX_VALUE);
 
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
         vbox1.setPadding(new Insets(20, 80, 10, 80));
         VBox vbox2 = new VBox(10);
-        vbox2.setPadding(new Insets(44, 80, 10, 0));
+        vbox2.setPadding(new Insets(22, 80, 10, 0));
         HBox hbox1 = new HBox();
-        hbox1.setPadding(new Insets(0, 50, 10, 50));
+        hbox1.setPadding(new Insets(-20, 50, 10, 50));
 
         // Add elements to layouts
-        vbox1.getChildren().addAll(labelTitle2, rbCurrent, rbDeposit, rbISA);
-        vbox2.getChildren().addAll(buttonCancel, buttonNewAccount);
+        vbox1.getChildren().addAll(label1);
+        vbox2.getChildren().addAll(buttonCancel, buttonNewCustomer);
         hbox1.getChildren().addAll(label2);
 
         // Add layouts to borderpane
@@ -135,14 +139,14 @@ public class NewAccountView extends Application {
         borderPane.setBottom(hbox1);
 
         // Create "sceneNewAccount"
-        sceneNewAccount = new Scene(borderPane, 600, 400);
+        sceneNewCustomer = new Scene(borderPane, 600, 400);
 
         /////////////////////////////////////////
         //////// DISPLAY SCENENEWACCOUNT ////////
         /////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
-        window.setScene(sceneNewAccount);
+        window.setScene(sceneNewCustomer);
         window.setOnCloseRequest(e -> {
             // Prevent default close action with consume()
             e.consume();
