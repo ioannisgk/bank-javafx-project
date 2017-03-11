@@ -1,5 +1,8 @@
 package com.company;
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
@@ -81,7 +84,7 @@ public class Main implements Serializable {
                         username = scanner.nextLine();
                         System.out.println("Please, input your password.");
                         password = scanner.nextLine();
-                        newcustomer = new Customer(name, email, address, username, password, new Date());
+                        newcustomer = new Customer(name, name, email, address, username, password, new Date());
                         customerList.add(newcustomer);
                         saveToFile(newcustomer);
                     } else {
@@ -351,7 +354,7 @@ public class Main implements Serializable {
                     System.out.println("Please, enter your address");
                     String address = scanner.nextLine();
                     for (Customer customer : customerList) {
-                        if (customer.getName().equals(name) && customer.getEmail().equals(email) && customer.getAddress().equals(address)) {
+                        if (customer.getFirstname().equals(name) && customer.getEmail().equals(email) && customer.getAddress().equals(address)) {
                             newcustomer = customer;
                             exists = true;
                         }
@@ -377,7 +380,7 @@ public class Main implements Serializable {
                             if (customer.getCustomerAccounts().get(i).type.equals("Current")) {
                                 double balance = customer.queryAccountBalance(customer.getCustomerAccounts().get(i));
                                 if (balance >= 15240) {
-                                    System.out.println("Name: " + customer.getName());
+                                    System.out.println("Name: " + customer.getFirstname());
                                     System.out.println("Email: " + customer.getEmail());
                                 }
                             }
@@ -428,7 +431,7 @@ public class Main implements Serializable {
             while ((obj = (Customer) streamIn.readObject()) != null) {
                 Customer customer = obj;
                 customerList.add(customer);
-                System.out.println(customer.getName());
+                System.out.println(customer.getFirstname());
                 System.out.println(customer.getPassword());
                 System.out.println("Loading customers finished");
                 streamIn = new ObjectInputStream(fileIn);

@@ -18,7 +18,8 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	// Class attributes
-    private String name;
+    private String firstname;
+    private String surname;
     private String email;
     private String address;
     private String username;
@@ -37,8 +38,9 @@ public class Customer implements Serializable {
     }
 
     // Class constructor
-    public Customer(String name, String email, String address, String username, String password, Date dateOfBirth) {
-        this.name = name;
+    public Customer(String firstname, String surname, String email, String address, String username, String password, Date dateOfBirth) {
+        this.firstname = firstname;
+        this.surname = surname;
         this.email = email;
         this.address = address;
         this.username = username;
@@ -51,8 +53,11 @@ public class Customer implements Serializable {
     private List<Account> customerAccounts = new ArrayList<>(0);
 
     // Class getters
-    public String getName() {
-        return name;
+    public String getFirstname() {
+        return firstname;
+    }
+    public String getSurname() {
+        return surname;
     }
     public String getEmail() {
         return email;
@@ -157,7 +162,7 @@ public class Customer implements Serializable {
 
     // Print details of Customer
     public void showDetails() {
-        System.out.println("Customer Name: " + name + "\n" +
+        System.out.println("Customer Name: " + firstname + " " + surname + "\n" +
                 "Email: " + email + "\n" +
                 "Address: " + address + "\n" +
                 "Username: " + username + "\n" +
@@ -170,7 +175,7 @@ public class Customer implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Customer [ name = " + name + ", email = " + email + ", address = " + address + ", username = " + username
+		return "Customer [ name = " + firstname + " " + surname + ", email = " + email + ", address = " + address + ", username = " + username
 				+ ", password = " + password + ", dateOfBirth = " + dateOfBirth + ", noOfSavingsAccounts = "
 				+ noOfSavingsAccounts + ", noOfDepositAccount = " + noOfDepositAccount + ", noOfCurrentAccounts = "
 				+ noOfCurrentAccounts + ", customerAccounts = " + customerAccounts + " ]";

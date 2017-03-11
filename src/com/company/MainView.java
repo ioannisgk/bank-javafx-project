@@ -10,6 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileInputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainView extends Application {
 
@@ -26,14 +29,10 @@ public class MainView extends Application {
         this.session = session;
     }
 
-    public boolean getSession () {
-        return session;
-    }
-
     public static void run (String[] args) {
         launch(args);
     }
-    @Override
+    //@Override
     public void start (Stage mainStage) throws Exception {
 
         window = mainStage;
@@ -53,6 +52,7 @@ public class MainView extends Application {
         Label labelUsername = new Label("Username:");
         GridPane.setConstraints(labelUsername, 0, 0);
         TextField username = new TextField();
+
         username.setPromptText("username");
         GridPane.setConstraints(username, 1, 0);
 
@@ -60,13 +60,14 @@ public class MainView extends Application {
         Label labelPassword = new Label("Password:");
         GridPane.setConstraints(labelPassword, 0, 1);
         TextField password = new TextField();
+
         password.setPromptText("password");
         GridPane.setConstraints(password, 1, 1);
 
         // Button for login
         Button buttonLogin = new Button("Log In");
         GridPane.setConstraints(buttonLogin, 1, 2);
-        buttonLogin.setOnAction(e -> window.setScene(sceneMain));
+        buttonLogin.setOnAction(e -> authenticate(username.getText(), password.getText()));
 
         // Add elements to layout and create "sceneLogin"
         gridLogin.getChildren().addAll(labelUsername, username, labelPassword, password, buttonLogin);
@@ -108,7 +109,11 @@ public class MainView extends Application {
             }
         });
         Button buttonLogout = new Button("Logout");
-        buttonLogout.setOnAction(e -> logout());
+        buttonLogout.setOnAction(e -> {
+            username.clear();
+            password.clear();
+            logout();
+        });
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
@@ -223,6 +228,25 @@ public class MainView extends Application {
         window.show();
     }
 
+    private void authenticate(String username, String password) {
+        // Create seller and extract username and password
+        Date dateOfBirth = parseDate("1981-11-02");
+        Staff Teller = new Staff("Ioannis", "Gkourtzounis", "igkourtzounis@deicollege.gr",
+                "Artemidos Street, Thessaloniki, Greece", "admin", "1234", dateOfBirth);
+
+        if (username.equals(Teller.getUsername()) && (password.equals(Teller.getPassword()))) {
+            window.setScene(sceneMain);
+        } else {
+            boolean answer;
+            answer = ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
+            if (answer) {
+                window.close();
+            } else {
+                window.setScene(sceneLogin);
+            }
+        }
+    }
+
     private void closeApplication() {
         boolean answer;
         answer = ConfirmBox.display("Confirmation", "Are you sure you want to exit?");
@@ -287,5 +311,14 @@ public class MainView extends Application {
         earchAccountView.start(window);
         window.setResizable(!window.isResizable());
         window.setResizable(window.isResizable());
+    }
+
+    // http://stackoverflow.com/questions/22326339/how-create-date-object-with-values-in-java
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }
