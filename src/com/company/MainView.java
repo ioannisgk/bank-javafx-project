@@ -232,7 +232,7 @@ public class MainView extends Application {
         // Create seller and extract username and password
         Date dateOfBirth = parseDate("1981-11-02");
         Staff Teller = new Staff("Ioannis", "Gkourtzounis", "igkourtzounis@deicollege.gr",
-                "Artemidos Street, Thessaloniki, Greece", "admin", "1234", dateOfBirth);
+                "Artemidos Street, Thessaloniki, Greece", "admin", "admin", dateOfBirth);
 
         if (username.equals(Teller.getUsername()) && (password.equals(Teller.getPassword()))) {
             window.setScene(sceneMain);
