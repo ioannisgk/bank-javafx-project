@@ -84,7 +84,7 @@ public class MainView extends Application {
         imageView.setFitHeight(144);
 
         // Create different elements
-        Label label1 = new Label("Welcome to our Bank Application.\nClick one of the available actions:");
+        Label label1 = new Label("Welcome to our Bank Application\nClick one of the available actions:");
         Button buttonNewAccount = new Button("Open a New Account");
         buttonNewAccount.setOnAction(e -> {
             process = false;
@@ -100,6 +100,13 @@ public class MainView extends Application {
             window.setResizable(window.isResizable());
         });
         Button buttonSearchAccounts = new Button("Search Current Accounts");
+        buttonSearchAccounts.setOnAction(e -> {
+            try {
+                searchAccounts();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(e -> logout());
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
@@ -273,5 +280,12 @@ public class MainView extends Application {
                 window.setResizable(window.isResizable());
             }
         }
+    }
+
+    private void searchAccounts() throws Exception {
+        SearchAccountView earchAccountView = new SearchAccountView();
+        earchAccountView.start(window);
+        window.setResizable(!window.isResizable());
+        window.setResizable(window.isResizable());
     }
 }

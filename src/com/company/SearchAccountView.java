@@ -9,15 +9,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import java.util.Date;
 
-public class ProcessAccountView extends Application {
+public class SearchAccountView extends Application {
 
     Stage window;
-    Scene sceneProcessAccount;
+    Scene sceneSearchAccount;
     TableView<Account> table;
 
-    public ProcessAccountView () {
+    public SearchAccountView () {
 
     }
 
@@ -31,7 +30,7 @@ public class ProcessAccountView extends Application {
         window.setTitle("Bank Application");
 
         /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
+        //////// DISPLAY SCENESEARCHACCOUNT /////////
         /////////////////////////////////////////////
 
         // GridPane layout with 10px padding
@@ -44,22 +43,18 @@ public class ProcessAccountView extends Application {
         TableColumn<Account, String> AccountID = new TableColumn<>("ID");
         AccountID.setMinWidth(97);
         AccountID.setCellValueFactory(new PropertyValueFactory<>("accountID"));
-        // Sortcode column
-        TableColumn<Account, String> sortcode = new TableColumn<>("Sortcode");
-        sortcode.setMinWidth(90);
-        sortcode.setCellValueFactory(new PropertyValueFactory<>("sortcode"));
-        // Type column
-        TableColumn<Account, String> type = new TableColumn<>("Type");
-        type.setMinWidth(90);
-        type.setCellValueFactory(new PropertyValueFactory<>("type"));
-        // Date column
-        TableColumn<Account, Date> date = new TableColumn<>("Date");
-        date.setMinWidth(90);
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-        // Interest column
-        TableColumn<Account, Double> interest = new TableColumn<>("Interest");
-        interest.setMinWidth(20);
-        interest.setCellValueFactory(new PropertyValueFactory<>("interest"));
+        // Firstname column
+        TableColumn<Account, String> firstname = new TableColumn<>("Firstname");
+        firstname.setMinWidth(90);
+        firstname.setCellValueFactory(new PropertyValueFactory<>("sortcode"));
+        // Surname column
+        TableColumn<Account, String> surname = new TableColumn<>("Surname");
+        surname.setMinWidth(90);
+        surname.setCellValueFactory(new PropertyValueFactory<>("type"));
+        // Email column
+        TableColumn<Account, String> email = new TableColumn<>("Email");
+        email.setMinWidth(90);
+        email.setCellValueFactory(new PropertyValueFactory<>("type"));
         // Balance column
         TableColumn<Account, Double> balance = new TableColumn<>("Balance");
         balance.setMinWidth(110);
@@ -69,42 +64,23 @@ public class ProcessAccountView extends Application {
         // http://stackoverflow.com/questions/26298337/tableview-adjust-number-of-visible-rows
         table = new TableView<>();
         table.setFixedCellSize(25);
-        table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(128));
+        table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(254));
         table.setItems(getAccount());
-        table.getColumns().addAll(AccountID, sortcode, type, date, interest, balance);
-
-        Label labelInfo = new Label("Specific info about an account...");
-        GridPane.setConstraints(labelInfo, 0, 2);
+        table.getColumns().addAll(AccountID, firstname, surname, email, balance);
 
         // Add elements to layout and create scene
-        gridOpenAccount.getChildren().addAll(table, labelInfo);
+        gridOpenAccount.getChildren().addAll(table);
 
         /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
+        //////// DISPLAY SCENESEARCHACCOUNT /////////
         /////////////////////////////////////////////
 
         // Create radio buttons to select account type
-        Label labelTitle2 = new Label("Select account type:");
-        ToggleGroup group = new ToggleGroup();
-        RadioButton rbCurrent1 = new RadioButton("Current ID:");
-        rbCurrent1.setUserData("Current");
-        rbCurrent1.setToggleGroup(group);
-        rbCurrent1.setSelected(true);
-        RadioButton rbCurrent2 = new RadioButton("Current ID:");
-        rbCurrent2.setUserData("Current");
-        rbCurrent2.setToggleGroup(group);
-        RadioButton rbDeposit = new RadioButton("Deposit ID:");
-        rbDeposit.setUserData("Deposit");
-        rbDeposit.setToggleGroup(group);
-        RadioButton rbSavings = new RadioButton("Savings ID:");
-        rbSavings.setUserData("Savings");
-        rbSavings.setToggleGroup(group);
+        Label labelTitle2 = new Label("Accounts listed with balance over 15,240\nThank you for using the Bank Application!");
 
         // Create open a new account and back to main button
-        Label labelAmount = new Label("Enter amount:");
-        TextField amount = new TextField();
-        amount.setPromptText("amount");
-        Button buttonCancel = new Button("Cancel");
+        Button buttonExport = new Button("Export Results");
+        Button buttonCancel = new Button("Back to Main Screen");
         buttonCancel.setOnAction(e -> {
             try {
                 backToMain();
@@ -112,27 +88,24 @@ public class ProcessAccountView extends Application {
                 e1.printStackTrace();
             }
         });
-        Button buttonDeposit = new Button("Deposit");
-        Button buttonWithdraw = new Button("Withdraw");
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
+        buttonExport.setMaxWidth(Double.MAX_VALUE);
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
-        buttonDeposit.setMaxWidth(Double.MAX_VALUE);
-        buttonWithdraw.setMaxWidth(Double.MAX_VALUE);
 
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
-        vbox1.setPadding(new Insets(20, 80, 10, 80));
+        vbox1.setPadding(new Insets(20, 0, 10, 50));
         VBox vbox2 = new VBox(8);
         vbox2.setPadding(new Insets(20, 80, 10, 0));
         HBox hbox1 = new HBox();
         hbox1.setPadding(new Insets(0, 50, 10, 50));
 
         // Add elements to layouts
-        vbox1.getChildren().addAll(labelTitle2, rbCurrent1, rbCurrent2, rbDeposit, rbSavings);
-        vbox2.getChildren().addAll(labelAmount, amount, buttonCancel, buttonDeposit, buttonWithdraw);
+        vbox1.getChildren().addAll(labelTitle2);
+        vbox2.getChildren().addAll(buttonCancel, buttonExport);
         hbox1.getChildren().addAll(label2);
 
         // Add layouts to borderpane
@@ -143,15 +116,15 @@ public class ProcessAccountView extends Application {
         borderPane.setRight(vbox2);
         borderPane.setBottom(hbox1);
 
-        // Create "sceneProcessAccount"
-        sceneProcessAccount = new Scene(borderPane, 600, 400);
+        // Create "sceneSearchAccount"
+        sceneSearchAccount = new Scene(borderPane, 600, 400);
 
         /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
+        //////// DISPLAY SCENESEARCHACCOUNT /////////
         /////////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
-        window.setScene(sceneProcessAccount);
+        window.setScene(sceneSearchAccount);
         window.setOnCloseRequest(e -> {
             // Prevent default close action with consume()
             e.consume();
