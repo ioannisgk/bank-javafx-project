@@ -92,9 +92,9 @@ public class NewAccountView extends Application {
         RadioButton rbDeposit = new RadioButton("Deposit");
         rbDeposit.setUserData("Deposit");
         rbDeposit.setToggleGroup(group);
-        RadioButton rbISA = new RadioButton("ISA");
-        rbISA.setUserData("ISA");
-        rbISA.setToggleGroup(group);
+        RadioButton rbSavings = new RadioButton("Savings");
+        rbSavings.setUserData("Savings");
+        rbSavings.setToggleGroup(group);
 
         // Create open a new account and back to main button
         Button buttonCancel = new Button("Cancel");
@@ -122,7 +122,7 @@ public class NewAccountView extends Application {
         hbox1.setPadding(new Insets(0, 50, 10, 50));
 
         // Add elements to layouts
-        vbox1.getChildren().addAll(labelTitle2, rbCurrent, rbDeposit, rbISA);
+        vbox1.getChildren().addAll(labelTitle2, rbCurrent, rbDeposit, rbSavings);
         vbox2.getChildren().addAll(buttonCancel, buttonNewAccount);
         hbox1.getChildren().addAll(label2);
 
