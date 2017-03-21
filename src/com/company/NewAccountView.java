@@ -1,4 +1,9 @@
 package com.company;
+import static com.company.Main.ACCOUNT_TYPE_CURRENT;
+import static com.company.Main.ACCOUNT_TYPE_DEPOSIT;
+import static com.company.Main.ACCOUNT_TYPE_SAVINGS;
+import static com.company.Main.saveToFile;
+import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,11 +15,14 @@ public class NewAccountView extends Application {
 
     Stage window;
     Scene sceneNewAccount;
+    Customer customer;
 
     public NewAccountView () {
 
     }
-
+    public NewAccountView (Customer customer) {
+        this.customer = customer;
+    }
     public static void run (String[] args) {
         launch(args);
     }
@@ -55,7 +63,7 @@ public class NewAccountView extends Application {
         Label labelDate = new Label("Birth Date:");
         GridPane.setConstraints(labelDate, 0, 3);
         TextField dob = new TextField();
-        dob.setPromptText("DDMMYYYY");
+        dob.setPromptText("DD-MM-YYYY");
         GridPane.setConstraints(dob, 1, 3);
 
         // Label and text field for phone
@@ -103,6 +111,40 @@ public class NewAccountView extends Application {
             }
         });
         Button buttonNewAccount = new Button("Open a New Account");
+        
+        buttonNewAccount.setOnAction(e -> {
+            boolean result = true;
+
+            try {
+                String type = group.getSelectedToggle().getUserData().toString();
+                System.out.println(type);
+                switch (type.toLowerCase()) {
+                    case "current":
+                        result = customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
+                        saveToFile(customer);
+                        System.out.println(customer.getNoOfCurrentAccounts());
+                        System.out.println(customer.toString());
+                        break;
+                    case "deposit":
+                        result = customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
+                        System.out.println(customer.toString());
+                        saveToFile(customer);
+                        break;
+                    case "savings":
+                        System.out.println("How many terms for this account? (1, 2, 3)");
+                        //int terms = scanner.nextInt();
+                        result = customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, 1);
+                        saveToFile(customer);
+                        System.out.println(customer.toString());
+                        break;
+                }
+                if (result) {
+                    ConfirmBox.display("","Message", "Account "+type.toLowerCase()+" type opened succesfully");
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
@@ -145,6 +187,13 @@ public class NewAccountView extends Application {
             e.consume();
             closeApplication();
         });
+        // Load customer to screen
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        firstname.setText(this.customer.getFirstname());
+        surname.setText(this.customer.getSurname());
+        dob.setText(formatter.format(this.customer.getDateOfBirth()));
+        phone.setText(this.customer.getPhone());
+        email.setText(this.customer.getEmail());
         window.show();
     }
 

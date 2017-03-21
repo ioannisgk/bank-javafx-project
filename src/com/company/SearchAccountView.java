@@ -1,17 +1,29 @@
 package com.company;
+import java.io.FileWriter;
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class SearchAccountView extends Application {
-
+//Delimiter used in CSV file
+    private static final String COMMA_DELIMITER = ",";
+    private static final String NEW_LINE_SEPARATOR = "\n";
+	
+	//CSV file header
+    private static final String FILE_HEADER = "AccountId,First Name,Surname, Email,Balance";
     Stage window;
     Scene sceneSearchAccount;
     TableView<Account> table;
@@ -44,17 +56,18 @@ public class SearchAccountView extends Application {
         AccountID.setMinWidth(97);
         AccountID.setCellValueFactory(new PropertyValueFactory<>("accountID"));
         // Firstname column
-        TableColumn<Account, String> firstname = new TableColumn<>("Firstname");
+        TableColumn<Account, String> firstname = new TableColumn<>("Fist Name");
+        firstname.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getCustomer().getFirstname()));
         firstname.setMinWidth(90);
-        firstname.setCellValueFactory(new PropertyValueFactory<>("sortcode"));
+        
         // Surname column
-        TableColumn<Account, String> surname = new TableColumn<>("Surname");
+        TableColumn<Account, String> surname = new TableColumn<>("SurName");
         surname.setMinWidth(90);
-        surname.setCellValueFactory(new PropertyValueFactory<>("type"));
+        surname.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getCustomer().getSurname()));
         // Email column
         TableColumn<Account, String> email = new TableColumn<>("Email");
         email.setMinWidth(90);
-        email.setCellValueFactory(new PropertyValueFactory<>("type"));
+        email.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getCustomer().getEmail()));
         // Balance column
         TableColumn<Account, Double> balance = new TableColumn<>("Balance");
         balance.setMinWidth(110);
@@ -80,6 +93,13 @@ public class SearchAccountView extends Application {
 
         // Create open a new account and back to main button
         Button buttonExport = new Button("Export Results");
+        buttonExport.setOnAction(e -> {
+            try {
+                exportCSV();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         Button buttonCancel = new Button("Back to Main Screen");
         buttonCancel.setOnAction(e -> {
             try {
@@ -149,10 +169,70 @@ public class SearchAccountView extends Application {
     public ObservableList<Account> getAccount(){
         Customer newcustomer = new Customer();
         ObservableList<Account> accounts = FXCollections.observableArrayList();
-        accounts.add(new CurrentAccount(newcustomer, 20.00));
-        accounts.add(new CurrentAccount(newcustomer, 15.00));
-        accounts.add(new DepositAccount(newcustomer, 120.00));
-        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
+        for(Customer customer : Main.customerList){
+            for(Account account : customer.getCustomerAccounts()) {
+                if (account.getType().equals("Current") && 
+                        account.balance > 15240){
+                        accounts.add(account);
+                }
+            }
+        }
+        
+//        accounts.add(new CurrentAccount(newcustomer, 20.00));
+//        accounts.add(new CurrentAccount(newcustomer, 15.00));
+//        accounts.add(new DepositAccount(newcustomer, 120.00));
+//        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
         return accounts;
+    }
+    public void exportCSV(){
+        FileWriter fileWriter = null;
+				
+		try {
+			fileWriter = new FileWriter("export.csv");
+
+			//Write the CSV file header
+			fileWriter.append(FILE_HEADER.toString());
+			
+			//Add a new line separator after the header
+			fileWriter.append(NEW_LINE_SEPARATOR);
+			
+			//Write a new student object list to the CSV file
+                        for(Customer customer : Main.customerList){
+                            for(Account account : customer.getCustomerAccounts()) {
+                                if (account.getType().equals("Current") && 
+                                        account.balance > 15240){
+                                    fileWriter.append(String.valueOf(account.getAccountID()));
+                                    fileWriter.append(COMMA_DELIMITER);
+                                    fileWriter.append(String.valueOf(customer.getFirstname()));
+                                    fileWriter.append(COMMA_DELIMITER);
+                                    fileWriter.append(String.valueOf(customer.getSurname()));
+                                    fileWriter.append(COMMA_DELIMITER);
+                                    fileWriter.append(customer.getEmail());
+                                    fileWriter.append(COMMA_DELIMITER);
+                                    fileWriter.append(String.valueOf(account.getBalance()));
+                                    fileWriter.append(NEW_LINE_SEPARATOR);
+                                }
+                            }
+                        }
+			
+
+			
+			
+			System.out.println("CSV file was created successfully !!!");
+			
+		} catch (Exception e) {
+			System.out.println("Error in CsvFileWriter !!!");
+			e.printStackTrace();
+		} finally {
+			
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter !!!");
+                e.printStackTrace();
+			}
+			
+		} 
     }
 }

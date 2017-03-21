@@ -1,4 +1,5 @@
 package com.company;
+import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,9 +11,9 @@ public class NewCustomerView extends Application {
 
     Stage window;
     Scene sceneNewCustomer;
-
-    public NewCustomerView () {
-
+    Customer customer;
+    public NewCustomerView (Customer customer) {
+        this.customer = customer;
     }
 
     public static void run (String[] args) {
@@ -42,6 +43,7 @@ public class NewCustomerView extends Application {
         GridPane.setConstraints(labelFirstname, 0, 1);
         TextField firstname = new TextField();
         firstname.setPromptText("firstname");
+        firstname.setText(customer.getFirstname());
         GridPane.setConstraints(firstname, 1, 1);
 
         // Label and text field for surname
@@ -49,13 +51,16 @@ public class NewCustomerView extends Application {
         GridPane.setConstraints(labelSurname, 0, 2);
         TextField surname = new TextField();
         surname.setPromptText("surname");
+        surname.setText(customer.getSurname());
         GridPane.setConstraints(surname, 1, 2);
 
         // Label and text field for date of birth
         Label labelDate = new Label("Birth Date:");
         GridPane.setConstraints(labelDate, 0, 3);
         TextField dob = new TextField();
-        dob.setPromptText("DDMMYYYY");
+        dob.setPromptText("DD-MM-YYYY");
+        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+        dob.setText(fmt.format(customer.getDateOfBirth()));
         GridPane.setConstraints(dob, 1, 3);
 
         // Label and text field for phone
@@ -113,7 +118,23 @@ public class NewCustomerView extends Application {
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
         buttonNewCustomer.setMaxWidth(Double.MAX_VALUE);
-
+        buttonNewCustomer.setOnAction(e -> {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                Customer newcustomer = new Customer(firstname.getText(),
+                surname.getText(),email.getText(),"",username.getText(),password.getText(),
+                formatter.parse(dob.getText()));
+                newcustomer.setPhone(phone.getText());
+                if (!MainController.customerIsValid(firstname.getText(),surname.getText(),dob.getText())) {
+                    //Main.customerList.add(newcustomer);
+                    Main.saveToFile(newcustomer);
+                }
+                
+                backToMain();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
         vbox1.setPadding(new Insets(20, 80, 10, 80));
@@ -163,4 +184,5 @@ public class NewCustomerView extends Application {
         mainView.setSession(true);
         mainView.start(window);
     }
+    
 }

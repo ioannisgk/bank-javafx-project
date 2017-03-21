@@ -14,13 +14,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.company.MainController.customerIsValid;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+
 public class MainView extends Application {
 
     boolean session = false;
     boolean process = false;
+    public  static String loginType;
     Stage window;
     Scene sceneLogin, sceneMain, sceneEnterInfo;
-
+    private RadioButton rbCustomer,rbStaff;
+    private ToggleGroup group;
     public MainView () {
 
     }
@@ -63,14 +69,26 @@ public class MainView extends Application {
 
         password.setPromptText("password");
         GridPane.setConstraints(password, 1, 1);
-
+        
+        Label labelTitle2 = new Label("Select  type:");
+        GridPane.setConstraints(labelTitle2, 0, 2);
+        group = new ToggleGroup();
+        rbStaff = new RadioButton("Staff");
+        rbStaff.setUserData("staff");
+        rbStaff.setToggleGroup(group);
+        rbStaff.setSelected(true);
+        GridPane.setConstraints(rbStaff, 1, 2);
+        rbCustomer = new RadioButton("Customer");
+        rbCustomer.setUserData("customer");
+        rbCustomer.setToggleGroup(group);
+        GridPane.setConstraints(rbCustomer, 1, 3);
         // Button for login
         Button buttonLogin = new Button("Log In");
-        GridPane.setConstraints(buttonLogin, 1, 2);
+        GridPane.setConstraints(buttonLogin, 1, 4);
         buttonLogin.setOnAction(e -> authenticate(username.getText(), password.getText()));
 
         // Add elements to layout and create "sceneLogin"
-        gridLogin.getChildren().addAll(labelUsername, username, labelPassword, password, buttonLogin);
+        gridLogin.getChildren().addAll(labelUsername, username, labelPassword, password,labelTitle2, rbStaff,rbCustomer,buttonLogin);
         sceneLogin = new Scene(gridLogin, 300, 200);
 
         //////////////////////////////////
@@ -178,7 +196,7 @@ public class MainView extends Application {
         Label labelDate = new Label("Date of birth:");
         GridPane.setConstraints(labelDate, 0, 2);
         TextField dob = new TextField();
-        dob.setPromptText("DDMMYYYY");
+        dob.setPromptText("DD-MM-YYYY");
         GridPane.setConstraints(dob, 1, 2);
 
         // Button for returning back to main
@@ -194,9 +212,9 @@ public class MainView extends Application {
         buttonCheck.setOnAction(e -> {
             try {
                 if (!process) {
-                    openNewAccount();
+                    openNewAccount(firstname.getText(), surname.getText(), dob.getText());
                 } else {
-                    processAccount();
+                    processAccount(firstname.getText(), surname.getText(), dob.getText());
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -230,19 +248,55 @@ public class MainView extends Application {
 
     private void authenticate(String username, String password) {
         // Create seller and extract username and password
-        Date dateOfBirth = parseDate("1981-11-02");
-        Staff Teller = new Staff("Ioannis", "Gkourtzounis", "igkourtzounis@deicollege.gr",
-                "Artemidos Street, Thessaloniki, Greece", "admin", "admin", dateOfBirth);
-
-        if (username.equals(Teller.getUsername()) && (password.equals(Teller.getPassword()))) {
-            window.setScene(sceneMain);
-        } else {
-            boolean answer;
-            answer = ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
-            if (answer) {
-                window.close();
+        
+        Date dateOfBirth = parseDate("1981-01-01");
+        Staff Teller = new Staff("Ioannis", "Gkourtzounis", "test@test.com",
+                "Greece", "admin", "admin", dateOfBirth);
+        if (rbCustomer.isSelected()) {
+            loginType = "customer";
+        }else{
+            loginType = "staff";
+        }
+            
+        if (loginType.equals("staff")){
+            if (username.equals(Teller.getUsername()) && (password.equals(Teller.getPassword()))) {
+                window.setScene(sceneMain);
             } else {
-                window.setScene(sceneLogin);
+                boolean answer;
+                answer = ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
+                if (answer) {
+                    window.close();
+                } else {
+                    window.setScene(sceneLogin);
+                }
+            }
+        }else{
+            //boolean customerFound = false;
+            Customer customerFound = null;
+            for(Customer customer: Main.customerList){
+                if (customer.getUsername().equals(username)
+                        && customer.getPassword().equals(password)){
+                    customerFound = customer;
+                    
+                    
+                }
+            }
+            if (customerFound != null){
+                try {
+                    SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+                    processAccount(customerFound.getFirstname(), customerFound.getSurname(),
+                            fmt.format(customerFound.getDateOfBirth()));
+                    }catch(Exception e){
+                        ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
+                    }
+            }else{
+                boolean answer;
+                answer = ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
+                if (answer) {
+                    window.close();
+                } else {
+                    window.setScene(sceneLogin);
+                }
             }
         }
     }
@@ -253,7 +307,7 @@ public class MainView extends Application {
         if (answer) { window.close(); }
     }
 
-    private void logout() {
+    public void logout() {
         boolean answer;
         answer = ConfirmBox.display("Confirmation", "Are you sure you want to logout?");
         if (answer) {
@@ -264,16 +318,35 @@ public class MainView extends Application {
         }
     }
 
-    private void openNewAccount() throws Exception {
-        boolean customerFound = true;
+    private void openNewAccount(String firstname, String surname, String dob) throws Exception {
+
+        // If the customer is found, we create an account, else we create the customer first
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        
+        boolean customerFound = false;
+        Customer newcustomer = null;
+        System.out.println(customerFound);
+        for (Customer customer : Main.customerList) {
+            if (customer.getFirstname().equals(firstname) &&
+                    customer.getSurname().equals(surname) &&
+                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
+                newcustomer = customer;
+                customerFound = true;
+            }
+        }
         boolean answer;
         if (customerFound) {
-            NewAccountView newAccountview = new NewAccountView();
+            NewAccountView newAccountview = new NewAccountView(newcustomer);
             newAccountview.start(window);
         } else {
             answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
+            
             if (answer) {
-                NewCustomerView newCustomerview = new NewCustomerView();
+                newcustomer = new Customer();
+                newcustomer.setFirstname(firstname);
+                newcustomer.setSurname(surname);
+                newcustomer.setDateOfBirth(formatter.parse(dob));
+                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
                 newCustomerview.start(window);
                 window.setResizable(!window.isResizable());
                 window.setResizable(window.isResizable());
@@ -285,16 +358,35 @@ public class MainView extends Application {
         }
     }
 
-    private void processAccount() throws Exception {
-        boolean customerFound = true;
+    private void processAccount(String firstname, String surname, String dob) throws Exception {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        
+        boolean customerFound = false;
+        Customer newcustomer = null;
+        System.out.println(customerFound);
+        for (Customer customer : Main.customerList) {
+            if (customer.getFirstname().equals(firstname) &&
+                    customer.getSurname().equals(surname) &&
+                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
+                newcustomer = customer;
+                customerFound = true;
+            }
+        }
         boolean answer;
         if (customerFound) {
-            ProcessAccountView processAccountView = new ProcessAccountView();
+            ProcessAccountView processAccountView = new ProcessAccountView(newcustomer);
+            processAccountView.currentMainView = this;
+                    
+                    
             processAccountView.start(window);
         } else {
             answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
             if (answer) {
-                NewCustomerView newCustomerview = new NewCustomerView();
+                newcustomer = new Customer();
+                newcustomer.setFirstname(firstname);
+                newcustomer.setSurname(surname);
+                newcustomer.setDateOfBirth(formatter.parse(dob));
+                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
                 newCustomerview.start(window);
                 window.setResizable(!window.isResizable());
                 window.setResizable(window.isResizable());
@@ -307,8 +399,8 @@ public class MainView extends Application {
     }
 
     private void searchAccounts() throws Exception {
-        SearchAccountView earchAccountView = new SearchAccountView();
-        earchAccountView.start(window);
+        SearchAccountView searchAccountView = new SearchAccountView();
+        searchAccountView.start(window);
         window.setResizable(!window.isResizable());
         window.setResizable(window.isResizable());
     }
@@ -316,7 +408,7 @@ public class MainView extends Application {
     // http://stackoverflow.com/questions/22326339/how-create-date-object-with-values-in-java
     public static Date parseDate(String date) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            return new SimpleDateFormat("dd-MM-yyyy").parse(date);
         } catch (ParseException e) {
             return null;
         }

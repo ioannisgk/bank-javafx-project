@@ -13,6 +13,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Account implements Serializable {
 
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     // Adding serial version ID
     // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
 	private static final long serialVersionUID = 1L;
@@ -20,7 +34,7 @@ public class Account implements Serializable {
 	// Class attributes
     protected Date dateOpened;
     protected String sortcode;
-    protected Customer customer;
+    private Customer customer;
     protected String type;
     protected double balance;
     protected double interest;
@@ -58,6 +72,18 @@ public class Account implements Serializable {
     }
 
     // Class getters
+    public String getAccountID() {
+        return accountID;
+    }
+    public Date getDateOpened() {
+        return dateOpened;
+    }
+    public String getSortcode() {
+        return sortcode;
+    }
+    public String getType() {
+        return type;
+    }
     public double getBalance() {
         return balance;
     }
@@ -80,8 +106,10 @@ public class Account implements Serializable {
             balance = balance + amount;
             System.out.println("You have made a deposit of £" + amount);
             System.out.println("Your current balance is £" + balance);
+            ConfirmBox.display("", "Message", "You have made a deposit of "+amount+" in your "+this.getType().toLowerCase()+" type of account");
         } else {
             System.out.println("Invalid amount, please enter an amount more than £10");
+            ConfirmBox.display("", "Error", "Invalid amount, please enter an amount more than £10");
         }
     }
 
@@ -91,8 +119,10 @@ public class Account implements Serializable {
             balance = balance - amount;
             System.out.println("You have made a withdrawal of £" + amount);
             System.out.println("Your current balance is £" + balance);
+            ConfirmBox.display("", "Message", "You have made a withdraw of "+amount+" in your "+this.getType().toLowerCase()+" type of account");
         } else {
             System.out.println("You have insufficient funds, please enter a smaller amount");
+            ConfirmBox.display("", "Error", "You have insufficient funds, please enter a smaller amount");
         }
     }
 

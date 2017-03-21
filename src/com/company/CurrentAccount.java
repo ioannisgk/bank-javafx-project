@@ -76,6 +76,6 @@ public class CurrentAccount extends Account implements Serializable {
                 "Balance: " + balance + "\n" +
                 "Interest: " + interest * 100 + "%\n");
 
-        customer.showDetails();
+        getCustomer().showDetails();
     }
 }

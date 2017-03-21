@@ -1,5 +1,6 @@
 package com.company;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ public class Customer implements Serializable {
     private String surname;
     private String email;
     private String address;
+    private String phone;
     private String username;
     private String password;
     private Date dateOfBirth;
@@ -56,8 +58,14 @@ public class Customer implements Serializable {
     public String getFirstname() {
         return firstname;
     }
+    public void setFirstname(String _firstName) {
+        firstname = _firstName;
+    }
     public String getSurname() {
         return surname;
+    }
+    public void setSurname(String _surName) {
+        surname = _surName;
     }
     public String getEmail() {
         return email;
@@ -72,6 +80,9 @@ public class Customer implements Serializable {
         return password;
     }
     public Date getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(Date dob) { 
+        dateOfBirth = dob; 
+    }
     public int getNoOfCurrentAccounts() { return noOfCurrentAccounts; }
     public int getNoOfDepositAccount() {
         return noOfDepositAccount;
@@ -84,9 +95,12 @@ public class Customer implements Serializable {
     }
 
     // Method for Customer to open a new Account
-    public void openNewAccount(String type, double balance, int terms) {
+    public boolean openNewAccount(String type, double balance, int terms) {
+        boolean result = true;
         if (balance < 0) {
             System.out.println("Customer cannot create account with negative balance");
+            ConfirmBox.display("","Error", "Customer cannot create account with negative balance");
+            result = false;
         }
 
         switch (type) {
@@ -95,11 +109,13 @@ public class Customer implements Serializable {
                 // Open a Current Account and increase "noOfCurrentAccounts" by 1
             	if (this.noOfCurrentAccounts >= MAX_CURRENT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_CURRENT_ACCOUNTS + " Current accounts");
+                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_CURRENT_ACCOUNTS + " Current accounts");
+                    result = false;
                 } else {
                     Account currentAccount = new CurrentAccount(this, balance);
                     this.noOfCurrentAccounts = this.noOfCurrentAccounts + 1;
                     this.getCustomerAccounts().add(currentAccount);
-                    Main.totalAccountsInSystem.add(currentAccount);
+                    //Main.totalAccountsInSystem.add(currentAccount);
                     System.out.println("Current account created..");
                 }
                 break;
@@ -108,11 +124,13 @@ public class Customer implements Serializable {
                 // Open a Deposit Account and increase "noOfDepositAccount" by 1
                 if (this.noOfDepositAccount >= MAX_DEPOSIT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + " Deposit Accounts");
+                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + " Deposit Accounts");
+                    result = false;
                 } else {
                     Account depositAccount = new DepositAccount(this, balance);
                     this.noOfDepositAccount = this.noOfDepositAccount + 1;
                     this.getCustomerAccounts().add(depositAccount);
-                    Main.totalAccountsInSystem.add(depositAccount);
+                    //Main.totalAccountsInSystem.add(depositAccount);
                     System.out.println("Deposit account created..");
                 }
                 break;
@@ -121,16 +139,19 @@ public class Customer implements Serializable {
                 // Open a Savings Account and increase "noOfSavingsAccounts" by 1
                 if (this.noOfSavingsAccounts >= MAX_SAVINGS_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
+                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
+                    result = false;
                 } else {
                     Account savingsAccount = new SavingsAccount(this, balance, terms);
                     this.noOfSavingsAccounts = this.noOfSavingsAccounts + 1;
                     this.getCustomerAccounts().add(savingsAccount);
-                    Main.totalAccountsInSystem.add(savingsAccount);
+                    //Main.totalAccountsInSystem.add(savingsAccount);
                     System.out.println("Savings account created...");
                 }
                 break;
             }
         }
+        return result;
     }
 
     // Method for Customer to deposit to an account
@@ -180,4 +201,30 @@ public class Customer implements Serializable {
 				+ noOfSavingsAccounts + ", noOfDepositAccount = " + noOfDepositAccount + ", noOfCurrentAccounts = "
 				+ noOfCurrentAccounts + ", customerAccounts = " + customerAccounts + " ]";
 	}
+        public boolean equals(Customer other){
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            String dob1 = formatter.format(this.getDateOfBirth());
+            String dob2 = formatter.format(this.getDateOfBirth());
+            if (this.getFirstname().equals(other.getFirstname())&& 
+                    this.getSurname().equals(other.getSurname()) && 
+                    dob1.equals(dob2))
+                    {
+                        return true;
+                    }
+            return false;
+        }
+
+    /**
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

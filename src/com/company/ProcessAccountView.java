@@ -10,17 +10,25 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 public class ProcessAccountView extends Application {
 
     Stage window;
     Scene sceneProcessAccount;
     TableView<Account> table;
-
+    public Customer customer;
+    private RadioButton rbCurrent1;
+    private RadioButton rbCurrent2;
+    private RadioButton rbDeposit;
+    private RadioButton rbSavings;
+    public MainView currentMainView;
     public ProcessAccountView () {
 
     }
-
+    public ProcessAccountView (Customer _customer) {
+        this.customer = _customer;
+    }
     public static void run (String[] args) {
         launch(args);
     }
@@ -36,6 +44,7 @@ public class ProcessAccountView extends Application {
 
         // GridPane layout with 10px padding
         GridPane gridOpenAccount = new GridPane();
+        
         gridOpenAccount.setPadding(new Insets(15, 20, 10, 30));
         gridOpenAccount.setVgap(8);
         gridOpenAccount.setHgap(10);
@@ -43,11 +52,12 @@ public class ProcessAccountView extends Application {
         // Account ID column
         TableColumn<Account, String> AccountID = new TableColumn<>("ID");
         AccountID.setMinWidth(97);
-        AccountID.setCellValueFactory(new PropertyValueFactory<>("accountID"));
+        AccountID.setCellValueFactory(new PropertyValueFactory<Account, String>("accountID"));
+        
         // Sortcode column
         TableColumn<Account, String> sortcode = new TableColumn<>("Sortcode");
         sortcode.setMinWidth(90);
-        sortcode.setCellValueFactory(new PropertyValueFactory<>("sortcode"));
+        sortcode.setCellValueFactory(new PropertyValueFactory<Account, String>("sortcode"));
         // Type column
         TableColumn<Account, String> type = new TableColumn<>("Type");
         type.setMinWidth(90);
@@ -55,7 +65,7 @@ public class ProcessAccountView extends Application {
         // Date column
         TableColumn<Account, Date> date = new TableColumn<>("Date");
         date.setMinWidth(90);
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+        date.setCellValueFactory(new PropertyValueFactory<>("dateOpened"));
         // Interest column
         TableColumn<Account, Double> interest = new TableColumn<>("Interest");
         interest.setMinWidth(20);
@@ -86,18 +96,47 @@ public class ProcessAccountView extends Application {
         // Create radio buttons to select account type
         Label labelTitle2 = new Label("Select account type:");
         ToggleGroup group = new ToggleGroup();
-        RadioButton rbCurrent1 = new RadioButton("Current ID:");
+        
+        rbCurrent1 = new RadioButton("Current ID:");
         rbCurrent1.setUserData("Current");
         rbCurrent1.setToggleGroup(group);
         rbCurrent1.setSelected(true);
-        RadioButton rbCurrent2 = new RadioButton("Current ID:");
+        rbCurrent1.setOnAction(e -> {
+            try {
+                table.getSelectionModel().select((Account)rbCurrent1.getUserData());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        rbCurrent2 = new RadioButton("Current ID:");
         rbCurrent2.setUserData("Current");
+        rbCurrent2.setOnAction(e -> {
+            try {
+                table.getSelectionModel().select((Account)rbCurrent2.getUserData());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });;
         rbCurrent2.setToggleGroup(group);
-        RadioButton rbDeposit = new RadioButton("Deposit ID:");
+        rbDeposit = new RadioButton("Deposit ID:");
+        rbDeposit.setOnAction(e -> {
+            try {
+                table.getSelectionModel().select((Account)rbDeposit.getUserData());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         rbDeposit.setUserData("Deposit");
         rbDeposit.setToggleGroup(group);
-        RadioButton rbSavings = new RadioButton("Savings ID:");
+        rbSavings = new RadioButton("Savings ID:");
         rbSavings.setUserData("Savings");
+        rbSavings.setOnAction(e -> {
+            try {
+                table.getSelectionModel().select((Account)rbSavings.getUserData());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         rbSavings.setToggleGroup(group);
 
         // Create open a new account and back to main button
@@ -105,13 +144,7 @@ public class ProcessAccountView extends Application {
         TextField amount = new TextField();
         amount.setPromptText("amount");
         Button buttonCancel = new Button("Cancel");
-        buttonCancel.setOnAction(e -> {
-            try {
-                backToMain();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
+        
         Button buttonDeposit = new Button("Deposit");
         Button buttonWithdraw = new Button("Withdraw");
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
@@ -119,9 +152,45 @@ public class ProcessAccountView extends Application {
         // Set a Column of Buttons to the Same Width
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
+        buttonCancel.setOnAction(e -> {
+            try {
+                if (MainView.loginType.equals("staff")){
+                backToMain();
+                }else{
+                    currentMainView.logout();
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         buttonDeposit.setMaxWidth(Double.MAX_VALUE);
+        buttonDeposit.setOnAction(e -> {
+            try {
+                Account account = table.getSelectionModel().getSelectedItem();
+                double inputAmount = Double.parseDouble(amount.getText()); 
+                account.deposit(inputAmount);
+                Main.saveToFile(this.customer);
+                table.setItems(getAccount());
+                table.refresh();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Amount must be a number");
+            }
+        });
         buttonWithdraw.setMaxWidth(Double.MAX_VALUE);
-
+        buttonWithdraw.setOnAction(e -> {
+            try {
+                Account account = table.getSelectionModel().getSelectedItem();
+                double inputAmount = Double.parseDouble(amount.getText()); 
+                account.withdraw(inputAmount);
+                Main.saveToFile(this.customer);
+                table.setItems(getAccount());
+                table.refresh();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Amount must be a number");
+            }
+        });
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
         vbox1.setPadding(new Insets(20, 80, 10, 80));
@@ -157,6 +226,55 @@ public class ProcessAccountView extends Application {
             e.consume();
             closeApplication();
         });
+        boolean firstCurrentAccount = false;
+        if (this.customer.getCustomerAccounts() != null){
+            for(Account account : customer.getCustomerAccounts()) {
+                if (firstCurrentAccount == false && account.getType().toLowerCase().equals("current")){
+                    firstCurrentAccount = true;
+                    rbCurrent1.setText("Current Account ID:" + account.getAccountID());
+                    rbCurrent1.setUserData(account);
+                }
+                if (firstCurrentAccount = true && account.getType().toLowerCase().equals("current")){
+                    rbCurrent2.setText("Current Account ID:" + account.getAccountID());
+                    rbCurrent2.setUserData(account);
+                }
+                if (account.getType().toLowerCase().equals("deposit")){
+                    rbDeposit.setText("Deposit Account ID:" + account.getAccountID());
+                    rbDeposit.setUserData(account);
+                }
+                if (account.getType().toLowerCase().equals("savings")){
+                    rbSavings.setText("Savings Account ID:" + account.getAccountID());
+                    rbSavings.setUserData(account);
+                }
+            }
+        }
+        table.setOnMouseClicked(e -> {
+            try {
+               Account account = table.getSelectionModel().getSelectedItem();
+               Account account1 = (Account)rbCurrent1.getUserData();
+               Account account2 = (Account)rbCurrent2.getUserData();
+               Account account3 = (Account)rbDeposit.getUserData();
+               Account account4 = (Account)rbSavings.getUserData();
+               if (account.getAccountID().equals(account1.getAccountID())){
+                   rbCurrent1.setSelected(true);
+               }else if(account.getAccountID().equals(account2.getAccountID())){
+                   rbCurrent2.setSelected(true);
+               }else if(account.getAccountID().equals(account3.getAccountID())){
+                   rbDeposit.setSelected(true);
+               }else if(account.getAccountID().equals(account4.getAccountID())){
+                   rbSavings.setSelected(true);
+               }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        if (MainView.loginType.equals("customer")){
+            buttonDeposit.setVisible(false);
+            buttonWithdraw.setVisible(false);
+        }else{
+            buttonDeposit.setVisible(true);
+            buttonWithdraw.setVisible(true);
+        }
         window.show();
     }
 
@@ -176,10 +294,16 @@ public class ProcessAccountView extends Application {
     public ObservableList<Account> getAccount(){
         Customer newcustomer = new Customer();
         ObservableList<Account> accounts = FXCollections.observableArrayList();
-        accounts.add(new CurrentAccount(newcustomer, 20.00));
-        accounts.add(new CurrentAccount(newcustomer, 15.00));
-        accounts.add(new DepositAccount(newcustomer, 120.00));
-        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
+        boolean firstCurrentAccount = false;
+        if (this.customer.getCustomerAccounts() != null){
+            for(Account account : customer.getCustomerAccounts()) {
+                accounts.add(account);
+            }
+        }
+//        accounts.add(new CurrentAccount(newcustomer, 20.00));
+//        accounts.add(new CurrentAccount(newcustomer, 15.00));
+//        accounts.add(new DepositAccount(newcustomer, 120.00));
+//        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
         return accounts;
     }
 }

@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 public class Main implements Serializable {
 
-    private static List<Customer> customerList = new ArrayList<>();
+    public static List<Customer> customerList = new ArrayList<>();
     // List that contains all accounts in the system
     public static List<Account> totalAccountsInSystem = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class Main implements Serializable {
     // Main method
     public static void main(String[] args) throws Exception {
         // showConsoleMenu();
-
+        customerList = customerList();
         MainView mainView = new MainView();
         mainView.run(args);
 
@@ -85,7 +85,7 @@ public class Main implements Serializable {
                         System.out.println("Please, input your password.");
                         password = scanner.nextLine();
                         newcustomer = new Customer(name, name, email, address, username, password, new Date());
-                        customerList.add(newcustomer);
+                        //customerList.add(newcustomer);
                         saveToFile(newcustomer);
                     } else {
                         // Once the customer is created the user is asked to input the account type
@@ -397,17 +397,35 @@ public class Main implements Serializable {
     }
 
     // Method for saving a Customer object to a file
-    private static void saveToFile(Customer customer) throws Exception {
+    public static void saveToFile(Customer _customer) throws Exception {
         try {
-            FileOutputStream fileOut = new FileOutputStream("customers.bin", true);
-            ObjectOutputStream streamOut = new ObjectOutputStream(fileOut);
-
-            streamOut.writeObject(customer);
-
-            // http://stackoverflow.com/questions/2340106/what-is-the-purpose-of-flush-in-java-streams
-            fileOut.flush();
-            streamOut.close();
-            fileOut.close();
+            File f = new File("customers.bin");
+            PrintWriter writer = new PrintWriter(f);
+            writer.print("");
+            writer.close();
+            boolean updatedCustomer = false;
+            for(Customer customer : Main.customerList){
+                if (customer.equals(_customer)){
+                    updatedCustomer = true;
+                    customer = _customer;
+                }
+            }
+            if (!updatedCustomer){
+                Main.customerList.add(_customer);
+            }
+            
+            
+            for(Customer customer : Main.customerList){
+                FileOutputStream fileOut = new FileOutputStream("customers.bin",true);
+                ObjectOutputStream streamOut = new ObjectOutputStream(fileOut);
+                streamOut.writeObject(customer);
+                // http://stackoverflow.com/questions/2340106/what-is-the-purpose-of-flush-in-java-streams
+                fileOut.flush();
+                streamOut.close();
+                fileOut.close();
+                
+            }
+            
         }
         catch (EOFException ex) {
             System.out.println("End of file reached.");
@@ -418,6 +436,7 @@ public class Main implements Serializable {
         }
         System.out.println("Customer details are saved");
     }
+   
 
     // Method for loading Customer objects to a list
     private static List<Customer> customerList() throws Exception {
@@ -451,7 +470,7 @@ public class Main implements Serializable {
         System.out.println("All customers loaded");
         return customerList;
     }
-
+ 
     // Example and some uses on Stack Overflow thread here
     // http://stackoverflow.com/questions/9375882/how-i-can-run-my-timertask-everyday-2-pm
     // Documentation http://docs.oracle.com/javase/7/docs/api/java/util/Timer.html#schedule(java.util.TimerTask,%20java.util.Date,%20long)
