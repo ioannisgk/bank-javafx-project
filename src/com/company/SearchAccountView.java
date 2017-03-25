@@ -3,27 +3,32 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Callback;
+
+/**
+ * NewCustomerView class
+ * Task 1: Create GridPane layout for use with sceneSearchAccount (it is the upper half of this scene)
+ * Task 2: Create sceneSearchAccount, the window for displaying search results
+ * Task 3: Display sceneSearchAccount window
+ * Task 4: Method exportCSV to export search results to CSV
+ * Task 5: Method getAccounts to get a list of Current Accounts for TableView
+ **/
 
 public class SearchAccountView extends Application {
-//Delimiter used in CSV file
+
+	// CSV file header and delimiter
+    private static final String FILE_HEADER = "AccountId,First Name,Surname, Email,Balance";
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
-	
-	//CSV file header
-    private static final String FILE_HEADER = "AccountId,First Name,Surname, Email,Balance";
+
     Stage window;
     Scene sceneSearchAccount;
     TableView<Account> table;
@@ -42,7 +47,7 @@ public class SearchAccountView extends Application {
         window.setTitle("Bank Application");
 
         /////////////////////////////////////////////
-        //////// DISPLAY SCENESEARCHACCOUNT /////////
+        //////// 1. Create GridPane layout //////////
         /////////////////////////////////////////////
 
         // GridPane layout with 10px padding
@@ -78,15 +83,17 @@ public class SearchAccountView extends Application {
         table = new TableView<>();
         table.setFixedCellSize(25);
         table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(254));
-        table.setItems(getAccount());
+
+        // Get accounts that match criteria from method getAccounts()
+        table.setItems(getAccounts());
         table.getColumns().addAll(AccountID, firstname, surname, email, balance);
 
         // Add elements to layout and create scene
         gridOpenAccount.getChildren().addAll(table);
 
-        /////////////////////////////////////////////
-        //////// DISPLAY SCENESEARCHACCOUNT /////////
-        /////////////////////////////////////////////
+        ////////////////////////////////////////////////
+        //////// 2. Create sceneSearchAccount //////////
+        ////////////////////////////////////////////////
 
         // Create radio buttons to select account type
         Label labelTitle2 = new Label("Accounts listed with balance over 15,240\nThank you for using the Bank Application!");
@@ -139,9 +146,9 @@ public class SearchAccountView extends Application {
         // Create "sceneSearchAccount"
         sceneSearchAccount = new Scene(borderPane, 600, 400);
 
-        /////////////////////////////////////////////
-        //////// DISPLAY SCENESEARCHACCOUNT /////////
-        /////////////////////////////////////////////
+        ////////////////////////////////////////////////
+        //////// 3. Display sceneSearchAccount /////////
+        ////////////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
         window.setScene(sceneSearchAccount);
@@ -151,6 +158,73 @@ public class SearchAccountView extends Application {
             closeApplication();
         });
         window.show();
+    }
+
+    ////////////////////////////////////////
+    //////// 4. Method: exportCSV //////////
+    ////////////////////////////////////////
+
+    // Method to export table content to CSV file
+    public void exportCSV(){
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter("export.csv");
+
+            // Write the CSV file header
+            fileWriter.append(FILE_HEADER.toString());
+
+            // Add a new line separator after the header
+            fileWriter.append(NEW_LINE_SEPARATOR);
+
+            // Write a new object list to the CSV file
+            for(Customer customer : Main.customerList){
+                for(Account account : customer.getCustomerAccounts()) {
+                    if (account.getType().equals("Current") && account.balance > 15240){
+                        fileWriter.append(String.valueOf(account.getAccountID()));
+                        fileWriter.append(COMMA_DELIMITER);
+                        fileWriter.append(String.valueOf(customer.getFirstname()));
+                        fileWriter.append(COMMA_DELIMITER);
+                        fileWriter.append(String.valueOf(customer.getSurname()));
+                        fileWriter.append(COMMA_DELIMITER);
+                        fileWriter.append(customer.getEmail());
+                        fileWriter.append(COMMA_DELIMITER);
+                        fileWriter.append(String.valueOf(account.getBalance()));
+                        fileWriter.append(NEW_LINE_SEPARATOR);
+                    }
+                }
+            }
+            System.out.println("CSV file was created successfully!!!");
+        } catch (Exception e) {
+            System.out.println("Error in CsvFileWriter!!!");
+            e.printStackTrace();
+        } finally {
+            try {
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                System.out.println("Error while flushing/closing fileWriter!!!");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    //////// 5. Method: getAccounts //////////
+    //////////////////////////////////////////
+
+    // Get all customer accounts and return a list of Current Accounts for TableView
+    public ObservableList<Account> getAccounts(){
+        Customer newcustomer = new Customer();
+        ObservableList<Account> accounts = FXCollections.observableArrayList();
+        for(Customer customer : Main.customerList){
+            for(Account account : customer.getCustomerAccounts()) {
+                if (account.getType().equals("Current") &&
+                        account.balance > 15240){
+                    accounts.add(account);
+                }
+            }
+        }
+        return accounts;
     }
 
     private void closeApplication() {
@@ -163,76 +237,5 @@ public class SearchAccountView extends Application {
         MainView mainView = new MainView();
         mainView.setSession(true);
         mainView.start(window);
-    }
-
-    //Get all of the products
-    public ObservableList<Account> getAccount(){
-        Customer newcustomer = new Customer();
-        ObservableList<Account> accounts = FXCollections.observableArrayList();
-        for(Customer customer : Main.customerList){
-            for(Account account : customer.getCustomerAccounts()) {
-                if (account.getType().equals("Current") && 
-                        account.balance > 15240){
-                        accounts.add(account);
-                }
-            }
-        }
-        
-//        accounts.add(new CurrentAccount(newcustomer, 20.00));
-//        accounts.add(new CurrentAccount(newcustomer, 15.00));
-//        accounts.add(new DepositAccount(newcustomer, 120.00));
-//        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
-        return accounts;
-    }
-    public void exportCSV(){
-        FileWriter fileWriter = null;
-				
-		try {
-			fileWriter = new FileWriter("export.csv");
-
-			//Write the CSV file header
-			fileWriter.append(FILE_HEADER.toString());
-			
-			//Add a new line separator after the header
-			fileWriter.append(NEW_LINE_SEPARATOR);
-			
-			//Write a new student object list to the CSV file
-                        for(Customer customer : Main.customerList){
-                            for(Account account : customer.getCustomerAccounts()) {
-                                if (account.getType().equals("Current") && 
-                                        account.balance > 15240){
-                                    fileWriter.append(String.valueOf(account.getAccountID()));
-                                    fileWriter.append(COMMA_DELIMITER);
-                                    fileWriter.append(String.valueOf(customer.getFirstname()));
-                                    fileWriter.append(COMMA_DELIMITER);
-                                    fileWriter.append(String.valueOf(customer.getSurname()));
-                                    fileWriter.append(COMMA_DELIMITER);
-                                    fileWriter.append(customer.getEmail());
-                                    fileWriter.append(COMMA_DELIMITER);
-                                    fileWriter.append(String.valueOf(account.getBalance()));
-                                    fileWriter.append(NEW_LINE_SEPARATOR);
-                                }
-                            }
-                        }
-			
-
-			
-			
-			System.out.println("CSV file was created successfully !!!");
-			
-		} catch (Exception e) {
-			System.out.println("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-		} finally {
-			
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-			} catch (IOException e) {
-				System.out.println("Error while flushing/closing fileWriter !!!");
-                e.printStackTrace();
-			}
-			
-		} 
     }
 }

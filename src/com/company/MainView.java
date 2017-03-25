@@ -13,24 +13,36 @@ import java.io.FileInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.company.MainController.customerIsValid;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
+/**
+ * MainView class
+ * Task 1: Create sceneLogin, the first windows that the user enters login data
+ * Task 2: Create sceneMain, the window which provides the main options to the user
+ * Task 3: Create sceneEnterInfo, the window used for authenticating the customer's data
+ * Task 4: Display sceneLogin when starting the application
+ * Task 5: Method authenticate for Staff and Customer (if customer exists call processAccount method)
+ * Task 6: Method openNewAccount and start NewAccountView with customer data
+ * Task 7: Method processAccount and start ProcessAccountView with customer data
+ * Task 8: Method searchAccounts and start SearchAccountView with customer data
+ **/
+
 public class MainView extends Application {
 
-    boolean session = false;
-    boolean process = false;
-    public  static String loginType;
-    Stage window;
-    Scene sceneLogin, sceneMain, sceneEnterInfo;
-    private RadioButton rbCustomer,rbStaff;
+    private boolean session = false;
+    private boolean process = false;
+    public static String loginType;
+    private Stage window;
+    private Scene sceneLogin, sceneMain, sceneEnterInfo;
+    private RadioButton rbCustomer, rbStaff;
     private ToggleGroup group;
+
     public MainView () {
 
     }
 
+    // Session variable to know if someone from staff has logged in
     public void setSession (boolean session) {
         this.session = session;
     }
@@ -44,9 +56,9 @@ public class MainView extends Application {
         window = mainStage;
         window.setTitle("Bank Application");
 
-        ///////////////////////////////////
-        //////// CREATE SCENELOGIN ////////
-        ///////////////////////////////////
+        //////////////////////////////////////
+        //////// 1. Create sceneLogin ////////
+        //////////////////////////////////////
 
         // GridPane layout with 10px padding
         GridPane gridLogin = new GridPane();
@@ -72,18 +84,24 @@ public class MainView extends Application {
         
         Label labelTitle2 = new Label("Select  type:");
         GridPane.setConstraints(labelTitle2, 0, 2);
+
+        // Radio button for Staff
         group = new ToggleGroup();
         rbStaff = new RadioButton("Staff");
         rbStaff.setUserData("staff");
         rbStaff.setToggleGroup(group);
         rbStaff.setSelected(true);
         GridPane.setConstraints(rbStaff, 1, 2);
+
+        // Radio button for Customer
         rbCustomer = new RadioButton("Customer");
         rbCustomer.setUserData("customer");
         rbCustomer.setToggleGroup(group);
         GridPane.setConstraints(rbCustomer, 1, 3);
+
         // Button for login
         Button buttonLogin = new Button("Log In");
+        buttonLogin.setMaxWidth(Double.MAX_VALUE);
         GridPane.setConstraints(buttonLogin, 1, 4);
         buttonLogin.setOnAction(e -> authenticate(username.getText(), password.getText()));
 
@@ -91,9 +109,9 @@ public class MainView extends Application {
         gridLogin.getChildren().addAll(labelUsername, username, labelPassword, password,labelTitle2, rbStaff,rbCustomer,buttonLogin);
         sceneLogin = new Scene(gridLogin, 300, 200);
 
-        //////////////////////////////////
-        //////// CREATE SCENEMAIN ////////
-        //////////////////////////////////
+        /////////////////////////////////////
+        //////// 2. Create sceneMain ////////
+        /////////////////////////////////////
 
         // http://tutorials.jenkov.com/javafx/imageview.html
         FileInputStream imageFile = new FileInputStream("bank_logo.png");
@@ -168,9 +186,9 @@ public class MainView extends Application {
         // Create "sceneMain"
         sceneMain = new Scene(borderPane, 600, 400);
 
-        ///////////////////////////////////////
-        //////// CREATE SCENEENTERINFO ////////
-        ///////////////////////////////////////
+        //////////////////////////////////////////
+        //////// 3. Create sceneEnterInfo ////////
+        //////////////////////////////////////////
 
         // GridPane layout with 10px padding
         GridPane gridEnterInfo = new GridPane();
@@ -206,7 +224,7 @@ public class MainView extends Application {
         buttonCancel.setMinWidth(70.0);
 
         // Button for next screen
-        // A new view object will be created and we will access next scene
+        // A new view object will be created and we will start the next scene
         Button buttonCheck = new Button("Next");
         GridPane.setConstraints(buttonCheck, 1, 4);
         buttonCheck.setOnAction(e -> {
@@ -226,9 +244,9 @@ public class MainView extends Application {
         gridEnterInfo.getChildren().addAll(labelFirstname, firstname, labelSurname, surname, labelDate, dob, buttonCancel, buttonCheck);
         sceneEnterInfo = new Scene(gridEnterInfo, 320, 180);
 
-        ////////////////////////////////////
-        //////// DISPLAY SCENELOGIN ////////
-        ////////////////////////////////////
+        ///////////////////////////////////////
+        //////// 4. Display sceneLogin ////////
+        ///////////////////////////////////////
 
         // Display "sceneLogin" when starting the application
         //
@@ -246,18 +264,26 @@ public class MainView extends Application {
         window.show();
     }
 
+    /////////////////////////////////////////
+    //////// 5. Method: authenticate ////////
+    /////////////////////////////////////////
+
+    // If Staff enters correct login details, show sceneMain
+    // If Customer enters correct login details, get his data and call processAccount() method
     private void authenticate(String username, String password) {
-        // Create seller and extract username and password
-        
+
+        // Create bank teller and extract username and password
         Date dateOfBirth = parseDate("1981-01-01");
         Staff Teller = new Staff("Ioannis", "Gkourtzounis", "test@test.com",
                 "Greece", "admin", "admin", dateOfBirth);
+
         if (rbCustomer.isSelected()) {
             loginType = "customer";
-        }else{
+        } else {
             loginType = "staff";
         }
-            
+
+        // Check username and password for Staff login
         if (loginType.equals("staff")){
             if (username.equals(Teller.getUsername()) && (password.equals(Teller.getPassword()))) {
                 window.setScene(sceneMain);
@@ -270,26 +296,25 @@ public class MainView extends Application {
                     window.setScene(sceneLogin);
                 }
             }
-        }else{
-            //boolean customerFound = false;
+
+        } else {
+            // Check if a customer exists and create object customerFound with his data
             Customer customerFound = null;
             for(Customer customer: Main.customerList){
-                if (customer.getUsername().equals(username)
-                        && customer.getPassword().equals(password)){
+                if (customer.getUsername().equals(username) && customer.getPassword().equals(password)){
                     customerFound = customer;
-                    
-                    
                 }
             }
+            // If customer is found call processAccount() method
             if (customerFound != null){
                 try {
                     SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
                     processAccount(customerFound.getFirstname(), customerFound.getSurname(),
                             fmt.format(customerFound.getDateOfBirth()));
-                    }catch(Exception e){
-                        ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
-                    }
-            }else{
+                } catch(Exception e) {
+                }
+            } else {
+                // If customer is not found prompt for exit
                 boolean answer;
                 answer = ConfirmBox.display("Confirmation", "Username/pass do not match!\nDo you want to exit?");
                 if (answer) {
@@ -299,6 +324,113 @@ public class MainView extends Application {
                 }
             }
         }
+    }
+
+    ///////////////////////////////////////////
+    //////// 6. Method: openNewAccount ////////
+    ///////////////////////////////////////////
+
+    // Check if the customer is found and show NewAccountView to create the account he wants
+    // Else, the staff will be prompt to create a new customer record
+    private void openNewAccount(String firstname, String surname, String dob) throws Exception {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        boolean answer;
+
+        // If the customer is found we create the object newcustomer with his data
+        boolean customerFound = false;
+        Customer newcustomer = null;
+        System.out.println(customerFound);
+        for (Customer customer : Main.customerList) {
+            if (customer.getFirstname().equals(firstname) && customer.getSurname().equals(surname) &&
+                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
+                newcustomer = customer;
+                customerFound = true;
+            }
+        }
+
+        // If customer exists we show NewAccountView to create the account he wants
+        if (customerFound) {
+            NewAccountView newAccountview = new NewAccountView(newcustomer);
+            newAccountview.start(window);
+
+        } else {
+            // If data was not found, the staff will be prompt to create a new customer record
+            answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
+            if (answer) {
+                newcustomer = new Customer();
+                newcustomer.setFirstname(firstname);
+                newcustomer.setSurname(surname);
+                newcustomer.setDateOfBirth(formatter.parse(dob));
+                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
+
+                newCustomerview.start(window);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            } else {
+                window.setScene(sceneMain);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            }
+        }
+    }
+
+    ///////////////////////////////////////////
+    //////// 7. Method: processAccount ////////
+    ///////////////////////////////////////////
+
+    private void processAccount(String firstname, String surname, String dob) throws Exception {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        boolean answer;
+
+        // If the customer is found we create the object newcustomer with his data
+        boolean customerFound = false;
+        Customer newcustomer = null;
+        System.out.println(customerFound);
+        for (Customer customer : Main.customerList) {
+            if (customer.getFirstname().equals(firstname) && customer.getSurname().equals(surname) &&
+                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
+                newcustomer = customer;
+                customerFound = true;
+            }
+        }
+
+        // If customer exists we show ProcessAccountView so he can deposit and withdraw
+        if (customerFound) {
+            ProcessAccountView processAccountView = new ProcessAccountView(newcustomer);
+            //processAccountView.currentMainView = this;
+            processAccountView.start(window);
+
+        } else {
+            // If data was not found, the staff will be prompt to create a new customer record
+            answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
+            if (answer) {
+                newcustomer = new Customer();
+                newcustomer.setFirstname(firstname);
+                newcustomer.setSurname(surname);
+                newcustomer.setDateOfBirth(formatter.parse(dob));
+                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
+
+                newCustomerview.start(window);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            } else {
+                window.setScene(sceneMain);
+                window.setResizable(!window.isResizable());
+                window.setResizable(window.isResizable());
+            }
+        }
+    }
+
+    ///////////////////////////////////////////
+    //////// 8. Method: searchAccounts ////////
+    ///////////////////////////////////////////
+
+    // Method to start searchAccountView
+    private void searchAccounts() throws Exception {
+        SearchAccountView searchAccountView = new SearchAccountView();
+        searchAccountView.start(window);
+        window.setResizable(!window.isResizable());
+        window.setResizable(window.isResizable());
     }
 
     private void closeApplication() {
@@ -316,93 +448,6 @@ public class MainView extends Application {
             window.setResizable(!window.isResizable());
             window.setResizable(window.isResizable());
         }
-    }
-
-    private void openNewAccount(String firstname, String surname, String dob) throws Exception {
-
-        // If the customer is found, we create an account, else we create the customer first
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        
-        boolean customerFound = false;
-        Customer newcustomer = null;
-        System.out.println(customerFound);
-        for (Customer customer : Main.customerList) {
-            if (customer.getFirstname().equals(firstname) &&
-                    customer.getSurname().equals(surname) &&
-                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
-                newcustomer = customer;
-                customerFound = true;
-            }
-        }
-        boolean answer;
-        if (customerFound) {
-            NewAccountView newAccountview = new NewAccountView(newcustomer);
-            newAccountview.start(window);
-        } else {
-            answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
-            
-            if (answer) {
-                newcustomer = new Customer();
-                newcustomer.setFirstname(firstname);
-                newcustomer.setSurname(surname);
-                newcustomer.setDateOfBirth(formatter.parse(dob));
-                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
-                newCustomerview.start(window);
-                window.setResizable(!window.isResizable());
-                window.setResizable(window.isResizable());
-            } else {
-                window.setScene(sceneMain);
-                window.setResizable(!window.isResizable());
-                window.setResizable(window.isResizable());
-            }
-        }
-    }
-
-    private void processAccount(String firstname, String surname, String dob) throws Exception {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        
-        boolean customerFound = false;
-        Customer newcustomer = null;
-        System.out.println(customerFound);
-        for (Customer customer : Main.customerList) {
-            if (customer.getFirstname().equals(firstname) &&
-                    customer.getSurname().equals(surname) &&
-                    customer.getDateOfBirth().equals(formatter.parse(dob))) {
-                newcustomer = customer;
-                customerFound = true;
-            }
-        }
-        boolean answer;
-        if (customerFound) {
-            ProcessAccountView processAccountView = new ProcessAccountView(newcustomer);
-            processAccountView.currentMainView = this;
-                    
-                    
-            processAccountView.start(window);
-        } else {
-            answer = ConfirmBox.display("Confirmation", "Customer was not found!!!\nCreate new customer now?");
-            if (answer) {
-                newcustomer = new Customer();
-                newcustomer.setFirstname(firstname);
-                newcustomer.setSurname(surname);
-                newcustomer.setDateOfBirth(formatter.parse(dob));
-                NewCustomerView newCustomerview = new NewCustomerView(newcustomer);
-                newCustomerview.start(window);
-                window.setResizable(!window.isResizable());
-                window.setResizable(window.isResizable());
-            } else {
-                window.setScene(sceneMain);
-                window.setResizable(!window.isResizable());
-                window.setResizable(window.isResizable());
-            }
-        }
-    }
-
-    private void searchAccounts() throws Exception {
-        SearchAccountView searchAccountView = new SearchAccountView();
-        searchAccountView.start(window);
-        window.setResizable(!window.isResizable());
-        window.setResizable(window.isResizable());
     }
 
     // http://stackoverflow.com/questions/22326339/how-create-date-object-with-values-in-java

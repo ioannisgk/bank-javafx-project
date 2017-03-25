@@ -12,6 +12,18 @@ import javafx.stage.Stage;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
+/**
+ * ProcessAccountView class
+ * Task 1: Create GridPane layout for use with sceneProcessAccount (it is the upper half of this scene)
+ * Task 2: Setup radiobuttons so hen user makes selection, the corresponding table row gets selected
+ * Task 3: Create sceneProcessAccount, the window which provides the options for deposit and withdrawal
+ * Task 4: Display sceneProcessAccount window
+ * Task 5: Method showAccountIDs for showing currently selected Account IDs to radiobuttons
+ * Task 6: Method deposit
+ * Task 7: Method withdraw
+ * Task 8: Method getAccounts to get a list of customer's accounts
+ **/
+
 public class ProcessAccountView extends Application {
 
     Stage window;
@@ -23,12 +35,15 @@ public class ProcessAccountView extends Application {
     private RadioButton rbDeposit;
     private RadioButton rbSavings;
     public MainView currentMainView;
+
     public ProcessAccountView () {
 
     }
-    public ProcessAccountView (Customer _customer) {
-        this.customer = _customer;
+
+    public ProcessAccountView (Customer customer) {
+        this.customer = customer;
     }
+
     public static void run (String[] args) {
         launch(args);
     }
@@ -39,7 +54,7 @@ public class ProcessAccountView extends Application {
         window.setTitle("Bank Application");
 
         /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
+        //////// 1. Create GridPane layout //////////
         /////////////////////////////////////////////
 
         // GridPane layout with 10px padding
@@ -80,24 +95,24 @@ public class ProcessAccountView extends Application {
         table = new TableView<>();
         table.setFixedCellSize(25);
         table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(128));
-        table.setItems(getAccount());
+
+        // Get current customer's accounts
+        table.setItems(getAccounts());
         table.getColumns().addAll(AccountID, sortcode, type, date, interest, balance);
 
-        Label labelInfo = new Label("Specific info about an account...");
-        GridPane.setConstraints(labelInfo, 0, 2);
-
         // Add elements to layout and create scene
-        gridOpenAccount.getChildren().addAll(table, labelInfo);
+        gridOpenAccount.getChildren().addAll(table);
 
-        /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
-        /////////////////////////////////////////////
+        ///////////////////////////////////////
+        //////// 2. Setup radiobuttons ////////
+        ///////////////////////////////////////
 
         // Create radio buttons to select account type
         Label labelTitle2 = new Label("Select account type:");
         ToggleGroup group = new ToggleGroup();
-        
-        rbCurrent1 = new RadioButton("Current ID:");
+
+        // When user makes selection on radio buttons, the corresponding table row gets selected
+        rbCurrent1 = new RadioButton("Current:");
         rbCurrent1.setUserData("Current");
         rbCurrent1.setToggleGroup(group);
         rbCurrent1.setSelected(true);
@@ -108,17 +123,19 @@ public class ProcessAccountView extends Application {
                 e1.printStackTrace();
             }
         });
-        rbCurrent2 = new RadioButton("Current ID:");
+        rbCurrent2 = new RadioButton("Current:");
         rbCurrent2.setUserData("Current");
+        rbCurrent2.setToggleGroup(group);
         rbCurrent2.setOnAction(e -> {
             try {
                 table.getSelectionModel().select((Account)rbCurrent2.getUserData());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-        });;
-        rbCurrent2.setToggleGroup(group);
-        rbDeposit = new RadioButton("Deposit ID:");
+        });
+        rbDeposit = new RadioButton("Deposit");
+        rbDeposit.setUserData("Deposit");
+        rbDeposit.setToggleGroup(group);
         rbDeposit.setOnAction(e -> {
             try {
                 table.getSelectionModel().select((Account)rbDeposit.getUserData());
@@ -126,10 +143,9 @@ public class ProcessAccountView extends Application {
                 e1.printStackTrace();
             }
         });
-        rbDeposit.setUserData("Deposit");
-        rbDeposit.setToggleGroup(group);
-        rbSavings = new RadioButton("Savings ID:");
+        rbSavings = new RadioButton("Savings:");
         rbSavings.setUserData("Savings");
+        rbSavings.setToggleGroup(group);
         rbSavings.setOnAction(e -> {
             try {
                 table.getSelectionModel().select((Account)rbSavings.getUserData());
@@ -137,9 +153,12 @@ public class ProcessAccountView extends Application {
                 e1.printStackTrace();
             }
         });
-        rbSavings.setToggleGroup(group);
 
-        // Create open a new account and back to main button
+        /////////////////////////////////////////////////
+        //////// 3. Create sceneProcessAccount //////////
+        /////////////////////////////////////////////////
+
+        // Create deposit, withdraw and cancel buttons
         Label labelAmount = new Label("Enter amount:");
         TextField amount = new TextField();
         amount.setPromptText("amount");
@@ -149,48 +168,31 @@ public class ProcessAccountView extends Application {
         Button buttonWithdraw = new Button("Withdraw");
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
-        // Set a Column of Buttons to the Same Width
-        // http://docs.oracle.com/javafx/2/layout/size_align.htm
+        // Go back to Main Menu or to first login screen
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
         buttonCancel.setOnAction(e -> {
             try {
                 if (MainView.loginType.equals("staff")){
                 backToMain();
-                }else{
+                } else {
                     currentMainView.logout();
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         });
+
+        // Deposit and Withdraw buttons
         buttonDeposit.setMaxWidth(Double.MAX_VALUE);
         buttonDeposit.setOnAction(e -> {
-            try {
-                Account account = table.getSelectionModel().getSelectedItem();
-                double inputAmount = Double.parseDouble(amount.getText()); 
-                account.deposit(inputAmount);
-                Main.saveToFile(this.customer);
-                table.setItems(getAccount());
-                table.refresh();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Amount must be a number");
-            }
+            deposit(Double.parseDouble(amount.getText()));
         });
+
         buttonWithdraw.setMaxWidth(Double.MAX_VALUE);
         buttonWithdraw.setOnAction(e -> {
-            try {
-                Account account = table.getSelectionModel().getSelectedItem();
-                double inputAmount = Double.parseDouble(amount.getText()); 
-                account.withdraw(inputAmount);
-                Main.saveToFile(this.customer);
-                table.setItems(getAccount());
-                table.refresh();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Amount must be a number");
-            }
+            withdraw(Double.parseDouble(amount.getText()));
         });
+
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
         vbox1.setPadding(new Insets(20, 80, 10, 80));
@@ -215,9 +217,9 @@ public class ProcessAccountView extends Application {
         // Create "sceneProcessAccount"
         sceneProcessAccount = new Scene(borderPane, 600, 400);
 
-        /////////////////////////////////////////////
-        //////// DISPLAY SCENEPROCESSACCOUNT ////////
-        /////////////////////////////////////////////
+        ////////////////////////////////////////////////
+        //////// 4. Display sceneProcessAccount ////////
+        ////////////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
         window.setScene(sceneProcessAccount);
@@ -226,56 +228,101 @@ public class ProcessAccountView extends Application {
             e.consume();
             closeApplication();
         });
+
+        // Show IDs next to radiobuttons
+        showAccountIDs();
+
+        if (MainView.loginType.equals("customer")){
+            buttonDeposit.setVisible(false);
+            buttonWithdraw.setVisible(false);
+        } else {
+            buttonDeposit.setVisible(true);
+            buttonWithdraw.setVisible(true);
+        }
+        window.show();
+    }
+
+    ///////////////////////////////////////////
+    //////// 5. Method: showAccountIDs ////////
+    ///////////////////////////////////////////
+
+    // Check which is the currently selected account type and get its ID
+    private void showAccountIDs() {
         boolean firstCurrentAccount = false;
         if (this.customer.getCustomerAccounts() != null){
             for(Account account : customer.getCustomerAccounts()) {
                 if (firstCurrentAccount == false && account.getType().toLowerCase().equals("current")){
                     firstCurrentAccount = true;
-                    rbCurrent1.setText("Current Account ID:" + account.getAccountID());
+                    rbCurrent1.setText("Current ID:" + account.getAccountID());
                     rbCurrent1.setUserData(account);
                 }
                 if (firstCurrentAccount = true && account.getType().toLowerCase().equals("current")){
-                    rbCurrent2.setText("Current Account ID:" + account.getAccountID());
+                    rbCurrent2.setText("Current ID:" + account.getAccountID());
                     rbCurrent2.setUserData(account);
                 }
                 if (account.getType().toLowerCase().equals("deposit")){
-                    rbDeposit.setText("Deposit Account ID:" + account.getAccountID());
+                    rbDeposit.setText("Deposit ID:" + account.getAccountID());
                     rbDeposit.setUserData(account);
                 }
                 if (account.getType().toLowerCase().equals("savings")){
-                    rbSavings.setText("Savings Account ID:" + account.getAccountID());
+                    rbSavings.setText("Savings ID:" + account.getAccountID());
                     rbSavings.setUserData(account);
                 }
             }
         }
-        table.setOnMouseClicked(e -> {
-            try {
-               Account account = table.getSelectionModel().getSelectedItem();
-               Account account1 = (Account)rbCurrent1.getUserData();
-               Account account2 = (Account)rbCurrent2.getUserData();
-               Account account3 = (Account)rbDeposit.getUserData();
-               Account account4 = (Account)rbSavings.getUserData();
-               if (account.getAccountID().equals(account1.getAccountID())){
-                   rbCurrent1.setSelected(true);
-               }else if(account.getAccountID().equals(account2.getAccountID())){
-                   rbCurrent2.setSelected(true);
-               }else if(account.getAccountID().equals(account3.getAccountID())){
-                   rbDeposit.setSelected(true);
-               }else if(account.getAccountID().equals(account4.getAccountID())){
-                   rbSavings.setSelected(true);
-               }
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-        if (MainView.loginType.equals("customer")){
-            buttonDeposit.setVisible(false);
-            buttonWithdraw.setVisible(false);
-        }else{
-            buttonDeposit.setVisible(true);
-            buttonWithdraw.setVisible(true);
+    }
+
+    ////////////////////////////////////
+    //////// 6. Method: deposit ////////
+    ////////////////////////////////////
+
+    // Get selected Account, deposit, save to file and refresh
+    private void deposit(double inputAmount) {
+        try {
+            Account account = table.getSelectionModel().getSelectedItem();
+            account.deposit(inputAmount);
+            Main.saveToFile(this.customer);
+            table.setItems(getAccounts());
+            table.refresh();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Amount must be a number");
         }
-        window.show();
+    }
+
+    /////////////////////////////////////
+    //////// 7. Method: withdraw ////////
+    /////////////////////////////////////
+
+    // Get selected Account, withdraw, save to file and refresh
+    private void withdraw(double inputAmount) {
+        try {
+            Account account = table.getSelectionModel().getSelectedItem();
+            account.withdraw(inputAmount);
+            Main.saveToFile(this.customer);
+            table.setItems(getAccounts());
+            table.refresh();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Amount must be a number");
+        }
+    }
+
+    ////////////////////////////////////////
+    //////// 8. Method: getAccounts ////////
+    ////////////////////////////////////////
+
+    // Get current customer's accounts and return his accounts in a list
+    private ObservableList<Account> getAccounts() {
+        Customer newcustomer = new Customer();
+        ObservableList<Account> accounts = FXCollections.observableArrayList();
+        boolean firstCurrentAccount = false;
+        if (this.customer.getCustomerAccounts() != null){
+            for(Account account : customer.getCustomerAccounts()) {
+                accounts.add(account);
+            }
+        }
+        return accounts;
     }
 
     private void closeApplication() {
@@ -288,22 +335,5 @@ public class ProcessAccountView extends Application {
         MainView mainView = new MainView();
         mainView.setSession(true);
         mainView.start(window);
-    }
-
-    //Get all of the products
-    public ObservableList<Account> getAccount(){
-        Customer newcustomer = new Customer();
-        ObservableList<Account> accounts = FXCollections.observableArrayList();
-        boolean firstCurrentAccount = false;
-        if (this.customer.getCustomerAccounts() != null){
-            for(Account account : customer.getCustomerAccounts()) {
-                accounts.add(account);
-            }
-        }
-//        accounts.add(new CurrentAccount(newcustomer, 20.00));
-//        accounts.add(new CurrentAccount(newcustomer, 15.00));
-//        accounts.add(new DepositAccount(newcustomer, 120.00));
-//        accounts.add(new SavingsAccount(newcustomer, 500.00, 1));
-        return accounts;
     }
 }

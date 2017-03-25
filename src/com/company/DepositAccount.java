@@ -9,10 +9,6 @@ import java.util.Date;
 
 public class DepositAccount extends Account implements Serializable {
 
-    // Adding serial version ID
-    // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
-    //private static final long serialVersionUID = 1L;
-
 	// Constructor for subclass
     public DepositAccount(Customer customer, double balance) {
         super(customer, balance);

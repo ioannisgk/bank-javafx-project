@@ -7,6 +7,12 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * ConfirmBox class
+ * Task 1: Displays a window with given title, message and 2 buttons (it returns the value of the clicked button)
+ * Task 2: Displays a window with given title, message and a button to return to main menu
+ **/
+
 public class ConfirmBox {
 
     static boolean result;

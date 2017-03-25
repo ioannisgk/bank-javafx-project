@@ -1,8 +1,4 @@
 package com.company;
-import static com.company.Main.ACCOUNT_TYPE_CURRENT;
-import static com.company.Main.ACCOUNT_TYPE_DEPOSIT;
-import static com.company.Main.ACCOUNT_TYPE_SAVINGS;
-import static com.company.Main.saveToFile;
 import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,18 +7,30 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import static com.company.Main.*;
+
+/**
+ * NewAccountView class
+ * Task 1: Create GridPane layout for use with sceneNewAccount (it is the upper half of this scene)
+ * Task 2: Create sceneNewAccount, the window for creating a new Account
+ * Task 3: Display sceneNewAccount with customer data
+ * Task 4: Method createNewAccount to open a new Account if it is permitted
+ **/
+
 public class NewAccountView extends Application {
 
     Stage window;
     Scene sceneNewAccount;
     Customer customer;
+    RadioButton rbCurrent, rbDeposit, rbSavings;
 
     public NewAccountView () {
-
     }
+
     public NewAccountView (Customer customer) {
         this.customer = customer;
     }
+
     public static void run (String[] args) {
         launch(args);
     }
@@ -32,9 +40,9 @@ public class NewAccountView extends Application {
         window = mainStage;
         window.setTitle("Bank Application");
 
-        ////////////////////////////////////////
-        //////// CREATE SCENENEWACCOUNT ////////
-        ////////////////////////////////////////
+        ///////////////////////////////////////////
+        //////// 1. Create GridPane layout ////////
+        ///////////////////////////////////////////
 
         // GridPane layout with 10px padding
         GridPane gridOpenAccount = new GridPane();
@@ -83,25 +91,25 @@ public class NewAccountView extends Application {
         // Add elements to layout and create scene
         gridOpenAccount.getChildren().addAll(labelTitle, labelFirstname, firstname, labelSurname, surname, labelDate, dob, labelPhone, phone, labelEmail, email);
 
-        ////////////////////////////////////////
-        //////// CREATE SCENENEWACCOUNT ////////
-        ////////////////////////////////////////
+        ///////////////////////////////////////////
+        //////// 2. Create sceneNewAccount ////////
+        ///////////////////////////////////////////
 
         // Create radio buttons to select account type
         Label labelTitle2 = new Label("Select account type:");
         ToggleGroup group = new ToggleGroup();
-        RadioButton rbCurrent = new RadioButton("Current");
+        rbCurrent = new RadioButton("Current Account");
         rbCurrent.setUserData("Current");
         rbCurrent.setToggleGroup(group);
         rbCurrent.setSelected(true);
-        RadioButton rbDeposit = new RadioButton("Deposit");
+        rbDeposit = new RadioButton("Deposit Account");
         rbDeposit.setUserData("Deposit");
         rbDeposit.setToggleGroup(group);
-        RadioButton rbSavings = new RadioButton("Savings");
+        rbSavings = new RadioButton("Savings Account");
         rbSavings.setUserData("Savings");
         rbSavings.setToggleGroup(group);
 
-        // Create open a new account and back to main button
+        // Create open a new account and back to main buttons
         Button buttonCancel = new Button("Cancel");
         buttonCancel.setOnAction(e -> {
             try {
@@ -111,40 +119,7 @@ public class NewAccountView extends Application {
             }
         });
         Button buttonNewAccount = new Button("Open a New Account");
-        
-        buttonNewAccount.setOnAction(e -> {
-            boolean result = true;
-
-            try {
-                String type = group.getSelectedToggle().getUserData().toString();
-                System.out.println(type);
-                switch (type.toLowerCase()) {
-                    case "current":
-                        result = customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
-                        saveToFile(customer);
-                        System.out.println(customer.getNoOfCurrentAccounts());
-                        System.out.println(customer.toString());
-                        break;
-                    case "deposit":
-                        result = customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
-                        System.out.println(customer.toString());
-                        saveToFile(customer);
-                        break;
-                    case "savings":
-                        System.out.println("How many terms for this account? (1, 2, 3)");
-                        //int terms = scanner.nextInt();
-                        result = customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, 1);
-                        saveToFile(customer);
-                        System.out.println(customer.toString());
-                        break;
-                }
-                if (result) {
-                    ConfirmBox.display("","Message", "Account "+type.toLowerCase()+" type opened succesfully");
-                }
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
+        buttonNewAccount.setOnAction(e -> createNewAccount(group));
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
@@ -176,9 +151,9 @@ public class NewAccountView extends Application {
         // Create "sceneNewAccount"
         sceneNewAccount = new Scene(borderPane, 600, 400);
 
-        /////////////////////////////////////////
-        //////// DISPLAY SCENENEWACCOUNT ////////
-        /////////////////////////////////////////
+        ////////////////////////////////////////////
+        //////// 3. Display sceneNewAccount ////////
+        ////////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
         window.setScene(sceneNewAccount);
@@ -187,7 +162,8 @@ public class NewAccountView extends Application {
             e.consume();
             closeApplication();
         });
-        // Load customer to screen
+
+        // Load customer data to this scene
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         firstname.setText(this.customer.getFirstname());
         surname.setText(this.customer.getSurname());
@@ -195,6 +171,43 @@ public class NewAccountView extends Application {
         phone.setText(this.customer.getPhone());
         email.setText(this.customer.getEmail());
         window.show();
+    }
+
+    /////////////////////////////////////////////
+    //////// 4. Method: createNewAccount ////////
+    /////////////////////////////////////////////
+
+    // Check Account type and open a new Account if it is permitted
+    private void createNewAccount(ToggleGroup group) {
+        boolean result = true;
+        try {
+            String type = group.getSelectedToggle().getUserData().toString();
+            System.out.println(type);
+            switch (type.toLowerCase()) {
+                case "current":
+                    result = customer.openNewAccount(ACCOUNT_TYPE_CURRENT, 0, 0);
+                    saveToFile(customer);
+                    System.out.println(customer.getNoOfCurrentAccounts());
+                    System.out.println(customer.toString());
+                    break;
+                case "deposit":
+                    result = customer.openNewAccount(ACCOUNT_TYPE_DEPOSIT, 0, 0);
+                    System.out.println(customer.toString());
+                    saveToFile(customer);
+                    break;
+                case "savings":
+                    System.out.println("How many terms for this account? (1, 2, 3)");
+                    result = customer.openNewAccount(ACCOUNT_TYPE_SAVINGS, 0, 1);
+                    saveToFile(customer);
+                    System.out.println(customer.toString());
+                    break;
+            }
+            if (result) {
+                ConfirmBox.display("","Message", "Account " + type.toLowerCase() + " type opened successfully");
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 
     private void closeApplication() {

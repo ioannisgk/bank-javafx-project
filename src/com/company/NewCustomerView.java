@@ -7,11 +7,22 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import static com.company.Main.saveToFile;
+
+/**
+ * NewCustomerView class
+ * Task 1: Create GridPane layout for use with sceneNewCustomer (it is the upper half of this scene)
+ * Task 2: Create sceneNewCustomer, the window for saving a new Customer
+ * Task 3: Display sceneNewCustomer window
+ * Task 4: Method createNewCustomer to save the new customer to object file
+ **/
+
 public class NewCustomerView extends Application {
 
     Stage window;
     Scene sceneNewCustomer;
     Customer customer;
+
     public NewCustomerView (Customer customer) {
         this.customer = customer;
     }
@@ -25,9 +36,9 @@ public class NewCustomerView extends Application {
         window = mainStage;
         window.setTitle("Bank Application");
 
-        ////////////////////////////////////////
-        //////// CREATE SCENENEWACCOUNT ////////
-        ////////////////////////////////////////
+        ///////////////////////////////////////////
+        //////// 1. Create GridPane layout ////////
+        ///////////////////////////////////////////
 
         // GridPane layout with 10px padding
         GridPane gridOpenAccount = new GridPane();
@@ -95,14 +106,14 @@ public class NewCustomerView extends Application {
         gridOpenAccount.getChildren().addAll(labelTitle, labelFirstname, firstname, labelSurname,
                 surname, labelDate, dob, labelPhone, phone, labelEmail, email, labelUsername, username, labelPassword, password);
 
-        ////////////////////////////////////////
-        //////// CREATE SCENENEWACCOUNT ////////
-        ////////////////////////////////////////
+        ////////////////////////////////////////////
+        //////// 2. Create sceneNewCustomer ////////
+        ////////////////////////////////////////////
 
         // Create radio buttons to select account type
         Label label1 = new Label("A new record will be created\nAll information will be saved");
 
-        // Create open a new account and back to main button
+        // Create save customer and back to main buttons
         Button buttonCancel = new Button("Cancel");
         buttonCancel.setOnAction(e -> {
             try {
@@ -112,29 +123,17 @@ public class NewCustomerView extends Application {
             }
         });
         Button buttonNewCustomer = new Button("Save Customer");
+        buttonNewCustomer.setOnAction(e -> {
+            createNewCustomer(firstname.getText(), surname.getText(),email.getText(),
+                    "", username.getText(), password.getText(), dob.getText(), phone.getText());
+        });
         Label label2 = new Label("Copyright 2017, Ioannis Gkourtzounis");
 
         // Set a Column of Buttons to the Same Width
         // http://docs.oracle.com/javafx/2/layout/size_align.htm
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
         buttonNewCustomer.setMaxWidth(Double.MAX_VALUE);
-        buttonNewCustomer.setOnAction(e -> {
-            try {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                Customer newcustomer = new Customer(firstname.getText(),
-                surname.getText(),email.getText(),"",username.getText(),password.getText(),
-                formatter.parse(dob.getText()));
-                newcustomer.setPhone(phone.getText());
-                if (!MainController.customerIsValid(firstname.getText(),surname.getText(),dob.getText())) {
-                    //Main.customerList.add(newcustomer);
-                    Main.saveToFile(newcustomer);
-                }
-                
-                backToMain();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
+
         // Set layout: vbox1 for Center, vbox2 for Right, hbox1 for Bottom
         VBox vbox1 = new VBox(10);
         vbox1.setPadding(new Insets(20, 80, 10, 80));
@@ -159,9 +158,9 @@ public class NewCustomerView extends Application {
         // Create "sceneNewAccount"
         sceneNewCustomer = new Scene(borderPane, 600, 400);
 
-        /////////////////////////////////////////
-        //////// DISPLAY SCENENEWACCOUNT ////////
-        /////////////////////////////////////////
+        /////////////////////////////////////////////
+        //////// 3. Display sceneNewCustomer ////////
+        /////////////////////////////////////////////
 
         // Display "sceneEnterInfo" when starting the application
         window.setScene(sceneNewCustomer);
@@ -171,6 +170,27 @@ public class NewCustomerView extends Application {
             closeApplication();
         });
         window.show();
+    }
+
+    //////////////////////////////////////////////
+    //////// 4. Method: createNewCustomer ////////
+    //////////////////////////////////////////////
+
+    // Get data from input fields, create newcustomer object and save to file
+    private void createNewCustomer(String firstname, String surname, String email, String address, String username, String password, String dob, String phone) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+        try {
+            Customer newcustomer = new Customer(firstname, surname, email, address, username, password, formatter.parse(dob));
+            newcustomer.setPhone(phone);
+
+            // Save a Customer object to a file
+            saveToFile(newcustomer);
+
+            backToMain();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 
     private void closeApplication() {
@@ -184,5 +204,4 @@ public class NewCustomerView extends Application {
         mainView.setSession(true);
         mainView.start(window);
     }
-    
 }

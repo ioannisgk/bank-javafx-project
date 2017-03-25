@@ -13,20 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Account implements Serializable {
 
-    /**
-     * @return the customer
-     */
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    /**
-     * @param customer the customer to set
-     */
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
     // Adding serial version ID
     // http://frequal.com/java/PracticalSerialVersionIdGuidelines.html
 	private static final long serialVersionUID = 1L;
@@ -61,6 +47,9 @@ public class Account implements Serializable {
     }
 
     // Class setters
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
     public void setBalance(double balance) {
         this.balance = balance;
     }
@@ -72,6 +61,9 @@ public class Account implements Serializable {
     }
 
     // Class getters
+    public Customer getCustomer() {
+        return customer;
+    }
     public String getAccountID() {
         return accountID;
     }

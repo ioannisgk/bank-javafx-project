@@ -54,21 +54,32 @@ public class Customer implements Serializable {
     // http://stackoverflow.com/questions/14903145/what-is-the-difference-between-list-and-arraylist (polymorphism)
     private List<Account> customerAccounts = new ArrayList<>(0);
 
+    // Class setters
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    public void setDateOfBirth(Date dob) {
+        dateOfBirth = dob;
+    }
+
     // Class getters
     public String getFirstname() {
         return firstname;
     }
-    public void setFirstname(String _firstName) {
-        firstname = _firstName;
-    }
     public String getSurname() {
         return surname;
     }
-    public void setSurname(String _surName) {
-        surname = _surName;
-    }
     public String getEmail() {
         return email;
+    }
+    public String getPhone() {
+        return phone;
     }
     public String getAddress() {
         return address;
@@ -76,13 +87,8 @@ public class Customer implements Serializable {
     public String getUsername() {
         return username;
     }
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
     public Date getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(Date dob) { 
-        dateOfBirth = dob; 
-    }
     public int getNoOfCurrentAccounts() { return noOfCurrentAccounts; }
     public int getNoOfDepositAccount() {
         return noOfDepositAccount;
@@ -154,6 +160,19 @@ public class Customer implements Serializable {
         return result;
     }
 
+    // Method to authenticate customer information
+    public boolean equals(Customer other){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String dob1 = formatter.format(this.getDateOfBirth());
+        String dob2 = formatter.format(this.getDateOfBirth());
+        if (this.getFirstname().equals(other.getFirstname())&&
+                this.getSurname().equals(other.getSurname()) &&
+                dob1.equals(dob2)) {
+            return true;
+        }
+        return false;
+    }
+
     // Method for Customer to deposit to an account
     public void deposit(Account account, double amount) {
         account.deposit(amount);
@@ -201,30 +220,4 @@ public class Customer implements Serializable {
 				+ noOfSavingsAccounts + ", noOfDepositAccount = " + noOfDepositAccount + ", noOfCurrentAccounts = "
 				+ noOfCurrentAccounts + ", customerAccounts = " + customerAccounts + " ]";
 	}
-        public boolean equals(Customer other){
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            String dob1 = formatter.format(this.getDateOfBirth());
-            String dob2 = formatter.format(this.getDateOfBirth());
-            if (this.getFirstname().equals(other.getFirstname())&& 
-                    this.getSurname().equals(other.getSurname()) && 
-                    dob1.equals(dob2))
-                    {
-                        return true;
-                    }
-            return false;
-        }
-
-    /**
-     * @return the phone
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * @param phone the phone to set
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }
