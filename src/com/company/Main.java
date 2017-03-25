@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
 
 /**
- * Main class: Loads customers from file and starts GUI
+ * Main class: Loads customers from file and starts GUI and schedulers
  **/
 
 public class Main implements Serializable {
@@ -18,11 +18,6 @@ public class Main implements Serializable {
     public static final String ACCOUNT_TYPE_SAVINGS = "savings";
     public static final String ACCOUNT_TYPE_DEPOSIT = "deposit";
     public static final String ACCOUNT_TYPE_CURRENT = "current";
-
-    //The scanner is used to read input data
-    //private static Scanner scanner = new Scanner(System.in);
-
-    ///////////////////////////////////////////////////////////////////
 
     // Main method
     public static void main(String[] args) throws Exception {
@@ -41,6 +36,7 @@ public class Main implements Serializable {
     // Method for saving a Customer object to a file
     public static void saveToFile(Customer newcustomer) throws Exception {
         try {
+            // If customer exists in customerList mark as updated
             File f = new File("customers.bin");
             PrintWriter writer = new PrintWriter(f);
             writer.print("");
@@ -56,7 +52,7 @@ public class Main implements Serializable {
                 Main.customerList.add(newcustomer);
             }
 
-
+            // Iterate customerList and save new customers
             for (Customer customer : Main.customerList) {
                 FileOutputStream fileOut = new FileOutputStream("customers.bin", true);
                 ObjectOutputStream streamOut = new ObjectOutputStream(fileOut);
@@ -65,7 +61,6 @@ public class Main implements Serializable {
                 fileOut.flush();
                 streamOut.close();
                 fileOut.close();
-
             }
 
         } catch (EOFException ex) {

@@ -2,9 +2,7 @@ package com.company;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -13,8 +11,6 @@ import java.io.FileInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 
 /**
  * MainView class
@@ -77,7 +73,7 @@ public class MainView extends Application {
         // Label and text field for password
         Label labelPassword = new Label("Password:");
         GridPane.setConstraints(labelPassword, 0, 1);
-        TextField password = new TextField();
+        TextField password = new PasswordField();
 
         password.setPromptText("password");
         GridPane.setConstraints(password, 1, 1);
@@ -184,7 +180,7 @@ public class MainView extends Application {
         borderPane.setBottom(hbox2);
 
         // Create "sceneMain"
-        sceneMain = new Scene(borderPane, 600, 400);
+        sceneMain = new Scene(borderPane, 650, 400);
 
         //////////////////////////////////////////
         //////// 3. Create sceneEnterInfo ////////
@@ -300,7 +296,7 @@ public class MainView extends Application {
         } else {
             // Check if a customer exists and create object customerFound with his data
             Customer customerFound = null;
-            for(Customer customer: Main.customerList){
+            for (Customer customer: Main.customerList) {
                 if (customer.getUsername().equals(username) && customer.getPassword().equals(password)){
                     customerFound = customer;
                 }
@@ -439,7 +435,7 @@ public class MainView extends Application {
         if (answer) { window.close(); }
     }
 
-    public void logout() {
+    private void logout() {
         boolean answer;
         answer = ConfirmBox.display("Confirmation", "Are you sure you want to logout?");
         if (answer) {

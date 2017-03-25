@@ -58,7 +58,7 @@ public class SearchAccountView extends Application {
 
         // Account ID column
         TableColumn<Account, String> AccountID = new TableColumn<>("ID");
-        AccountID.setMinWidth(97);
+        AccountID.setMinWidth(80);
         AccountID.setCellValueFactory(new PropertyValueFactory<>("accountID"));
         // Firstname column
         TableColumn<Account, String> firstname = new TableColumn<>("Fist Name");
@@ -67,21 +67,22 @@ public class SearchAccountView extends Application {
         
         // Surname column
         TableColumn<Account, String> surname = new TableColumn<>("SurName");
-        surname.setMinWidth(90);
+        surname.setMinWidth(120);
         surname.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getCustomer().getSurname()));
         // Email column
         TableColumn<Account, String> email = new TableColumn<>("Email");
-        email.setMinWidth(90);
+        email.setMinWidth(200);
         email.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getCustomer().getEmail()));
         // Balance column
         TableColumn<Account, Double> balance = new TableColumn<>("Balance");
-        balance.setMinWidth(110);
+        balance.setMinWidth(90);
         balance.setCellValueFactory(new PropertyValueFactory<>("balance"));
 
         // Adjust number of visible rows and create table
         // http://stackoverflow.com/questions/26298337/tableview-adjust-number-of-visible-rows
         table = new TableView<>();
         table.setFixedCellSize(25);
+        table.setMinWidth(580);
         table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(254));
 
         // Get accounts that match criteria from method getAccounts()
@@ -144,7 +145,7 @@ public class SearchAccountView extends Application {
         borderPane.setBottom(hbox1);
 
         // Create "sceneSearchAccount"
-        sceneSearchAccount = new Scene(borderPane, 600, 400);
+        sceneSearchAccount = new Scene(borderPane, 650, 400);
 
         ////////////////////////////////////////////////
         //////// 3. Display sceneSearchAccount /////////
@@ -193,16 +194,17 @@ public class SearchAccountView extends Application {
                     }
                 }
             }
+            ConfirmBox.display("Message", "CSV file was created successfully!", 1);
             System.out.println("CSV file was created successfully!!!");
         } catch (Exception e) {
-            System.out.println("Error in CsvFileWriter!!!");
+            System.out.println("Error in CsvFileWriter!");
             e.printStackTrace();
         } finally {
             try {
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
-                System.out.println("Error while flushing/closing fileWriter!!!");
+                System.out.println("Error while flushing/closing fileWriter!");
                 e.printStackTrace();
             }
         }

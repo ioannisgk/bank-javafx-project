@@ -98,10 +98,10 @@ public class Account implements Serializable {
             balance = balance + amount;
             System.out.println("You have made a deposit of £" + amount);
             System.out.println("Your current balance is £" + balance);
-            ConfirmBox.display("", "Message", "You have made a deposit of "+amount+" in your "+this.getType().toLowerCase()+" type of account");
+            ConfirmBox.display("Message", "You have made a deposit of " + amount + " in your " + this.getType().toLowerCase() + " type of account", 0);
         } else {
             System.out.println("Invalid amount, please enter an amount more than £10");
-            ConfirmBox.display("", "Error", "Invalid amount, please enter an amount more than £10");
+            ConfirmBox.display("Error", "Invalid amount, please enter an amount more than £10", 1);
         }
     }
 
@@ -111,10 +111,10 @@ public class Account implements Serializable {
             balance = balance - amount;
             System.out.println("You have made a withdrawal of £" + amount);
             System.out.println("Your current balance is £" + balance);
-            ConfirmBox.display("", "Message", "You have made a withdraw of "+amount+" in your "+this.getType().toLowerCase()+" type of account");
+            ConfirmBox.display("Message", "You have made a withdraw of " + amount + " in your " + this.getType().toLowerCase() + " type of account", 0);
         } else {
             System.out.println("You have insufficient funds, please enter a smaller amount");
-            ConfirmBox.display("", "Error", "You have insufficient funds, please enter a smaller amount");
+            ConfirmBox.display("Error", "You have insufficient funds, please enter a smaller amount", 1);
         }
     }
 

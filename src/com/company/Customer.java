@@ -105,7 +105,7 @@ public class Customer implements Serializable {
         boolean result = true;
         if (balance < 0) {
             System.out.println("Customer cannot create account with negative balance");
-            ConfirmBox.display("","Error", "Customer cannot create account with negative balance");
+            ConfirmBox.display("Error", "Customer cannot create account with negative balance", 1);
             result = false;
         }
 
@@ -115,7 +115,7 @@ public class Customer implements Serializable {
                 // Open a Current Account and increase "noOfCurrentAccounts" by 1
             	if (this.noOfCurrentAccounts >= MAX_CURRENT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_CURRENT_ACCOUNTS + " Current accounts");
-                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_CURRENT_ACCOUNTS + " Current accounts");
+                    ConfirmBox.display("Error", "Customer can not open more than " + MAX_CURRENT_ACCOUNTS + "\nCurrent accounts", 1);
                     result = false;
                 } else {
                     Account currentAccount = new CurrentAccount(this, balance);
@@ -130,7 +130,7 @@ public class Customer implements Serializable {
                 // Open a Deposit Account and increase "noOfDepositAccount" by 1
                 if (this.noOfDepositAccount >= MAX_DEPOSIT_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + " Deposit Accounts");
-                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + " Deposit Accounts");
+                    ConfirmBox.display("Error", "Customer can not open more than " + MAX_DEPOSIT_ACCOUNTS + "\nDeposit Accounts", 1);
                     result = false;
                 } else {
                     Account depositAccount = new DepositAccount(this, balance);
@@ -145,7 +145,7 @@ public class Customer implements Serializable {
                 // Open a Savings Account and increase "noOfSavingsAccounts" by 1
                 if (this.noOfSavingsAccounts >= MAX_SAVINGS_ACCOUNTS) {
                     System.out.println("Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
-                    ConfirmBox.display("","Error", "Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + " Savings accounts");
+                    ConfirmBox.display("Error", "Customer can not open more than " + MAX_SAVINGS_ACCOUNTS + "\nSavings accounts", 1);
                     result = false;
                 } else {
                     Account savingsAccount = new SavingsAccount(this, balance, terms);

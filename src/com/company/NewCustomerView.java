@@ -156,7 +156,7 @@ public class NewCustomerView extends Application {
         borderPane.setBottom(hbox1);
 
         // Create "sceneNewAccount"
-        sceneNewCustomer = new Scene(borderPane, 600, 400);
+        sceneNewCustomer = new Scene(borderPane, 650, 400);
 
         /////////////////////////////////////////////
         //////// 3. Display sceneNewCustomer ////////
@@ -187,7 +187,9 @@ public class NewCustomerView extends Application {
             // Save a Customer object to a file
             saveToFile(newcustomer);
 
-            backToMain();
+            ConfirmBox.display("Message", "New customer was created successfully!", 0);
+
+            //backToMain();
         } catch (Exception e1) {
             e1.printStackTrace();
         }

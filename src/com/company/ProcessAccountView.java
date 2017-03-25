@@ -66,34 +66,35 @@ public class ProcessAccountView extends Application {
 
         // Account ID column
         TableColumn<Account, String> AccountID = new TableColumn<>("ID");
-        AccountID.setMinWidth(97);
+        AccountID.setMinWidth(70);
         AccountID.setCellValueFactory(new PropertyValueFactory<Account, String>("accountID"));
         
         // Sortcode column
         TableColumn<Account, String> sortcode = new TableColumn<>("Sortcode");
-        sortcode.setMinWidth(90);
+        sortcode.setMinWidth(70);
         sortcode.setCellValueFactory(new PropertyValueFactory<Account, String>("sortcode"));
         // Type column
         TableColumn<Account, String> type = new TableColumn<>("Type");
-        type.setMinWidth(90);
+        type.setMinWidth(70);
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
         // Date column
         TableColumn<Account, Date> date = new TableColumn<>("Date");
-        date.setMinWidth(90);
+        date.setMinWidth(213);
         date.setCellValueFactory(new PropertyValueFactory<>("dateOpened"));
         // Interest column
         TableColumn<Account, Double> interest = new TableColumn<>("Interest");
-        interest.setMinWidth(20);
+        interest.setMinWidth(10);
         interest.setCellValueFactory(new PropertyValueFactory<>("interest"));
         // Balance column
         TableColumn<Account, Double> balance = new TableColumn<>("Balance");
-        balance.setMinWidth(110);
+        balance.setMinWidth(90);
         balance.setCellValueFactory(new PropertyValueFactory<>("balance"));
 
         // Adjust number of visible rows and create table
         // http://stackoverflow.com/questions/26298337/tableview-adjust-number-of-visible-rows
         table = new TableView<>();
         table.setFixedCellSize(25);
+        table.setMinWidth(580);
         table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(128));
 
         // Get current customer's accounts
@@ -175,7 +176,7 @@ public class ProcessAccountView extends Application {
                 if (MainView.loginType.equals("staff")){
                 backToMain();
                 } else {
-                    currentMainView.logout();
+                    logout();
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -215,7 +216,7 @@ public class ProcessAccountView extends Application {
         borderPane.setBottom(hbox1);
 
         // Create "sceneProcessAccount"
-        sceneProcessAccount = new Scene(borderPane, 600, 400);
+        sceneProcessAccount = new Scene(borderPane, 650, 400);
 
         ////////////////////////////////////////////////
         //////// 4. Display sceneProcessAccount ////////
@@ -232,10 +233,17 @@ public class ProcessAccountView extends Application {
         // Show IDs next to radiobuttons
         showAccountIDs();
 
+        // Hide
         if (MainView.loginType.equals("customer")){
+            labelTitle2.setVisible(false);
+            labelAmount.setVisible(false);
+            amount.setVisible(false);
             buttonDeposit.setVisible(false);
             buttonWithdraw.setVisible(false);
         } else {
+            labelTitle2.setVisible(true);
+            labelAmount.setVisible(true);
+            amount.setVisible(true);
             buttonDeposit.setVisible(true);
             buttonWithdraw.setVisible(true);
         }
@@ -253,19 +261,19 @@ public class ProcessAccountView extends Application {
             for(Account account : customer.getCustomerAccounts()) {
                 if (firstCurrentAccount == false && account.getType().toLowerCase().equals("current")){
                     firstCurrentAccount = true;
-                    rbCurrent1.setText("Current ID:" + account.getAccountID());
+                    rbCurrent1.setText("Current ID: " + account.getAccountID());
                     rbCurrent1.setUserData(account);
                 }
                 if (firstCurrentAccount = true && account.getType().toLowerCase().equals("current")){
-                    rbCurrent2.setText("Current ID:" + account.getAccountID());
+                    rbCurrent2.setText("Current ID: " + account.getAccountID());
                     rbCurrent2.setUserData(account);
                 }
                 if (account.getType().toLowerCase().equals("deposit")){
-                    rbDeposit.setText("Deposit ID:" + account.getAccountID());
+                    rbDeposit.setText("Deposit ID: " + account.getAccountID());
                     rbDeposit.setUserData(account);
                 }
                 if (account.getType().toLowerCase().equals("savings")){
-                    rbSavings.setText("Savings ID:" + account.getAccountID());
+                    rbSavings.setText("Savings ID: " + account.getAccountID());
                     rbSavings.setUserData(account);
                 }
             }
@@ -285,8 +293,8 @@ public class ProcessAccountView extends Application {
             table.setItems(getAccounts());
             table.refresh();
         } catch (Exception e1) {
+            ConfirmBox.display("Message", "Amount must be a number!", 1);
             e1.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Amount must be a number");
         }
     }
 
@@ -303,8 +311,8 @@ public class ProcessAccountView extends Application {
             table.setItems(getAccounts());
             table.refresh();
         } catch (Exception e1) {
+            ConfirmBox.display("Message", "Amount must be a number!", 1);
             e1.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Amount must be a number");
         }
     }
 
@@ -329,6 +337,12 @@ public class ProcessAccountView extends Application {
         boolean answer;
         answer = ConfirmBox.display("Confirmation", "Are you sure you want to exit?");
         if (answer) { window.close(); }
+    }
+
+    public void logout() throws Exception {
+        MainView mainView = new MainView();
+        mainView.setSession(false);
+        mainView.start(window);
     }
 
     private void backToMain() throws Exception {

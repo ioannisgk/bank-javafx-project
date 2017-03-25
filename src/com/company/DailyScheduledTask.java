@@ -35,5 +35,6 @@ public class DailyScheduledTask extends TimerTask {
                 account.setTotalMonthlyBalance(account.getTotalMonthlyBalance() + account.getBalance());
             }
         }
+        System.out.println("DailyScheduledTask run successfully");
     }
 }

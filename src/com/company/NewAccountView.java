@@ -149,7 +149,7 @@ public class NewAccountView extends Application {
         borderPane.setBottom(hbox1);
 
         // Create "sceneNewAccount"
-        sceneNewAccount = new Scene(borderPane, 600, 400);
+        sceneNewAccount = new Scene(borderPane, 650, 400);
 
         ////////////////////////////////////////////
         //////// 3. Display sceneNewAccount ////////
@@ -203,7 +203,7 @@ public class NewAccountView extends Application {
                     break;
             }
             if (result) {
-                ConfirmBox.display("","Message", "Account " + type.toLowerCase() + " type opened successfully");
+                ConfirmBox.display("Message", "Account type: " + type.toLowerCase() + " opened successfully", 0);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
